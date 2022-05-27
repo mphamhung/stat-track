@@ -1,7 +1,7 @@
 import './App.css';
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Alert from '@mui/material/Alert';
+import {Alert, Button, ButtonGroup, Container} from '@mui/material';
+// import ButtonGroup from '@mui/material/ButtonGroup';
+// import Alert from '@mui/material/Alert';
 import React from 'react'
 
   const plays = []
@@ -80,16 +80,19 @@ class App extends React.Component {
  
   return (
     <div className="App">
-      <header className="App-header">
+      <Container>
       <ButtonGroup size="large" aria-label="text button group">
         {buttonActions}
       </ButtonGroup>
       <ButtonGroup orientation="vertical" size='medium' variant="contained" aria-label="outlined primary button group">
         {buttonMembers}
       </ButtonGroup>
-
+      </Container>
+      <Container>
       {this.renderPlays()}
-      </header>
+
+      </Container>
+
     </div>
   );
   }
