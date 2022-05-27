@@ -9,10 +9,10 @@ var passList = []
 
 function buttonClicked(name) {
   // alert('Hello', {name})
-  if (passList.length == 0 && (name.member == 'Goal' || name.member == 'Throwaway' )) {
+  if (passList.length == 0 && (name.member === 'Goal' || name.member === 'Throwaway' )) {
   
   }
-  if (passList.length > 0 && (name.member == 'D')) {
+  else if (passList.length > 0 && (name.member === 'D')) {
   
   }
   else if (passList[passList.length - 1] != name.member) {
@@ -20,7 +20,7 @@ function buttonClicked(name) {
   }
 
   
-  if (passList[passList.length - 1] == 'Goal' || name.member == 'Throwaway' ){
+  if (passList.length > 0 && (passList[passList.length - 1] === 'Goal' || name.member === 'Throwaway' )){
     plays.push(passList)
     console.log(plays)
     alert(plays)
