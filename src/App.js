@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -9,13 +8,13 @@ var passList = []
 
 function buttonClicked(name) {
   // alert('Hello', {name})
-  if (passList.length == 0 && (name.member === 'Goal' || name.member === 'Throwaway' )) {
+  if (passList.length === 0 && (name.member === 'Goal' || name.member === 'Throwaway' )) {
   
   }
   else if (passList.length > 0 && (name.member === 'D')) {
   
   }
-  else if (passList[passList.length - 1] != name.member) {
+  else if (passList[passList.length - 1] !== name.member) {
   passList.push(name.member)
   }
 
