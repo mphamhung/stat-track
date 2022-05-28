@@ -1,5 +1,5 @@
 import './App.css';
-import {Alert, Button, ButtonGroup, Container} from '@mui/material';
+import {Alert, Button, ButtonGroup, Container, Box} from '@mui/material';
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
@@ -9,13 +9,15 @@ import React from 'react'
 
 
 function DisplayPlay(props) {
-  if (props.play[props.play.length - 1] ==='Goal')
+  let text = props.play.join(' => ')
+  
+  if (props.play[props.play.length - 1] === 'Goal')
     return (
-      <Alert severity='success'>{props.play}</Alert>
+      <Alert severity='success'>{text}</Alert>
     )
   else {
     return (
-      <Alert severity='error'>{props.play}</Alert>
+      <Alert severity='error'>{text}</Alert>
     )
   }
 }
@@ -113,7 +115,7 @@ class App extends React.Component {
 
   renderPlays() {
     return this.state.play.map((member) =>
-    <DisplayPlay play={member}>{member}</DisplayPlay>
+    <DisplayPlay play={member}></DisplayPlay>
    )
   }
 
@@ -156,10 +158,15 @@ class App extends React.Component {
     const actions = ['Goal', 'Throwaway', "D"];
   
     const femaleMembers = this.state.females.map((member) =>
-      <Button onClick={() => this.buttonClicked({member})} variant="contained">{member}</Button>
+    <Box pt={3} m={1}>
+      <Button onClick={() => this.buttonClicked({member})} variant="contained" fullWidth color='secondary'>{member}</Button>
+    </Box>
     )
     const maleMembers = this.state.males.map((member) =>
-      <Button onClick={() => this.buttonClicked({member})} variant="contained">{member}</Button>
+    <Box pt={3} m={1}>
+      <Button onClick={() => this.buttonClicked({member})} variant="contained" fullWidth color='primary'>{member}</Button>
+      </Box>
+
     )
     
     const buttonActions = actions.map((member) =>
