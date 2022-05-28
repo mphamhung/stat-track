@@ -87,7 +87,7 @@ class App extends React.Component {
       play: [],
       posts: [],
       males: [],
-      females: []
+      females: [],
     }
   }
 
@@ -158,36 +158,43 @@ class App extends React.Component {
     const actions = ['Goal', 'Throwaway', "D"];
   
     const femaleMembers = this.state.females.map((member) =>
-    <Box pt={3} m={1}>
+    <Box m={1}>
       <Button onClick={() => this.buttonClicked({member})} variant="contained" fullWidth color='secondary'>{member}</Button>
     </Box>
     )
     const maleMembers = this.state.males.map((member) =>
-    <Box pt={3} m={1}>
+    <Box m={1}>
       <Button onClick={() => this.buttonClicked({member})} variant="contained" fullWidth color='primary'>{member}</Button>
       </Box>
 
     )
     
     const buttonActions = actions.map((member) =>
+    <Box m={1}>
+
     <Button onClick={() => this.buttonClicked({member})}>{member}</Button>
+    </Box>
     )
     
     
  
   return (
     <div className="App">
+      <Box m={1}>      
       <NewPlayer></NewPlayer>
+      </Box>
       <Container>
+      <Box m={1}>
       <ButtonGroup size="large" aria-label="text button group">
         {buttonActions}
       </ButtonGroup>
+      </Box>
       </Container>
       <Container>
-      <ButtonGroup orientation="vertical" size='medium' variant="contained" aria-label="outlined primary button group">
+      <ButtonGroup orientation="vertical" size='large' variant="contained" >
         {femaleMembers}
       </ButtonGroup>
-      <ButtonGroup orientation="vertical" size='medium' variant="contained" aria-label="outlined primary button group">
+      <ButtonGroup orientation="vertical" size='large' variant="contained" >
         {maleMembers}
       </ButtonGroup>
       </Container>
