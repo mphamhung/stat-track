@@ -32,12 +32,22 @@ const NewPlayer = () => {
     const newplayer = {name, gender}
 
     if (e.nativeEvent.submitter.name === 'del') {
+
+      fetch("https://stat-track-db.herokuapp.com/players?name="+name)
+      .then(resp => resp.json())
+      .then (data => {
+        let id = data.map((player) => {
+          return (player.id)
+        }
+        )[0]
+        fetch("https://stat-track-db.herokuapp.com/players/"+id, {
+          method: 'DELETE',
+        }).then(() => {
+          console.log('player deleted')
+        })
+      })
       // console.log("https://stat-track-db.herokuapp.com/players?name="+name)
-      fetch("https://stat-track-db.herokuapp.com/players/"+name, {
-      method: 'DELETE',
-    }).then(() => {
-      console.log('player deleted')
-    })
+      
     }
 
     else if (e.nativeEvent.submitter.name === 'new') {
@@ -156,14 +166,14 @@ class App extends React.Component {
 
   render() {
     const actions = ['Goal', 'Throwaway', "D"];
-  
+    const padding = 0.3
     const femaleMembers = this.state.females.map((member) =>
-    <Box m={1}>
+    <Box m={padding}>
       <Button onClick={() => this.buttonClicked({member})} variant="contained" fullWidth color='secondary'>{member}</Button>
     </Box>
     )
     const maleMembers = this.state.males.map((member) =>
-    <Box m={1}>
+    <Box m={padding}>
       <Button onClick={() => this.buttonClicked({member})} variant="contained" fullWidth color='primary'>{member}</Button>
       </Box>
 
@@ -190,11 +200,26 @@ class App extends React.Component {
       </ButtonGroup>
       </Box>
       </Container>
-      <Container>
-      <ButtonGroup orientation="vertical" size='large' variant="contained" >
+      <Container
+   >
+      <ButtonGroup 
+      orientation="vertical" 
+      size='large' 
+      variant="contained" 
+      style={{
+        border: "solid",
+        minWidth: "48%",
+      }}>
         {femaleMembers}
       </ButtonGroup>
-      <ButtonGroup orientation="vertical" size='large' variant="contained" >
+      <ButtonGroup 
+      orientation="vertical" 
+      size='large' 
+      variant="contained" 
+      style={{
+        border: "solid",
+        minWidth: "48%",
+      }}>
         {maleMembers}
       </ButtonGroup>
       </Container>
