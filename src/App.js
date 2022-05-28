@@ -1,5 +1,5 @@
 import './App.css';
-import {Alert, Button, ButtonGroup, Container, FormControl, TextField} from '@mui/material';
+import {Alert, Button, ButtonGroup, Container} from '@mui/material';
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
@@ -29,7 +29,7 @@ const NewPlayer = () => {
     e.preventDefault();    
     const newplayer = {name, gender}
 
-    if (e.nativeEvent.submitter.name == 'del') {
+    if (e.nativeEvent.submitter.name === 'del') {
       // console.log("https://stat-track-db.herokuapp.com/players?name="+name)
       fetch("https://stat-track-db.herokuapp.com/players/"+name, {
       method: 'DELETE',
@@ -38,7 +38,7 @@ const NewPlayer = () => {
     })
     }
 
-    else if (e.nativeEvent.submitter.name == 'new') {
+    else if (e.nativeEvent.submitter.name === 'new') {
       fetch("https://stat-track-db.herokuapp.com/players", {
         method: 'POST',
         headers: { "Content-Type": "application/json"},
