@@ -7,6 +7,8 @@ import React from 'react'
 
 const db_url = "https://stat-track-db.herokuapp.com"
 
+const actions = ['G', 'TA', "D", "Undo"];
+
 const player_list = [
   {name: "Michael", gender: "M"},
   {name: "Marco", gender: "M"},
@@ -211,14 +213,22 @@ class App extends React.Component {
       })
     }
 
-    
+    else if (props.action === "D" && currList.length === 1 ){
+    currList.push(props.action)
+    currPlays.push(currList)
+    this.setState({
+      play: currPlays,
+      passes:[]
+    })
+
+    }
     
   }
 
 
   render() {
 
-    const actions = ['G', 'TA', "D", "Undo"];
+    
     const padding = 0.3
     
     const femaleMembers = this.state.females.map((name) =>
