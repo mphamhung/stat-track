@@ -4,24 +4,75 @@ import {Alert, Button, ButtonGroup, Container, Box} from '@mui/material';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
 
-  const plays = []
-  var passList = []
 
+const db_url = "https://stat-track-db.herokuapp.com"
+
+const player_list = [
+  {name: "Michael", gender: "M"},
+  {name: "Marco", gender: "M"},
+  {name: "Shawn", gender: "M"},
+  {name: "David", gender: "M"},
+  {name: "Keith", gender: "M"},
+  {name: "John", gender: "M"},
+  {name: "Rocco", gender: "M"},
+  {name: "Matt", gender: "M"},
+  {name: "Nancy", gender: "F"},
+  {name: "Cynthia", gender: "F"},
+  {name: "Kiki", gender: "F"},
+  {name: "Carina", gender: "F"},
+  {name: "Abby", gender: "F"},
+  {name: "Erika", gender: "F"},
+  {name: "Hanna", gender: "F"},
+]
 
 function DisplayPlay(props) {
-  let text = props.play.join(' => ')
+   let text = props.play.join(' => ')
   
-  if (props.play[props.play.length - 1] === 'Goal')
+  if (props.play[props.play.length - 1] === 'G')
     return (
       <Alert severity='success'>{text}</Alert>
     )
+  else if (props.play[props.play.length - 1] === 'TA'){
+    return (
+    <Alert severity='warning'>{text}</Alert>
+    )
+  }
   else {
     return (
-      <Alert severity='error'>{text}</Alert>
+      <Alert severity='info'>{text}</Alert>
     )
   }
 }
 
+function delete_player(name, gender) {
+  fetch(db_url+"/players?name="+name+"?gender="+gender)
+    .then(resp => resp.json())
+    .then (data => {
+      let id = data.map((player) => {
+        return (player.id)
+      }
+      )[0]
+      fetch(db_url+"/players/"+id, {
+        method: 'DELETE',
+      }).then(() => {
+        console.log('player deleted')
+      })
+    })
+}
+
+function add_player(name, gender) {
+  if (name) {
+   
+  fetch(db_url+"/players", {
+    method: 'POST',
+    headers: { "Content-Type": "application/json"},
+    body: JSON.stringify({name, gender})
+  }).then(() => {
+    console.log('new player added')
+  })
+   
+}
+}
 
 const NewPlayer = () => {
   const [name, setName] = React.useState('')
@@ -29,41 +80,30 @@ const NewPlayer = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();    
-    const newplayer = {name, gender}
-
     if (e.nativeEvent.submitter.name === 'del') {
+      console.log('deleted player')
 
-      fetch("https://stat-track-db.herokuapp.com/players?name="+name)
-      .then(resp => resp.json())
-      .then (data => {
-        let id = data.map((player) => {
-          return (player.id)
-        }
-        )[0]
-        fetch("https://stat-track-db.herokuapp.com/players/"+id, {
-          method: 'DELETE',
-        }).then(() => {
-          console.log('player deleted')
-        })
-      })
-      // console.log("https://stat-track-db.herokuapp.com/players?name="+name)
-      
+    delete_player(name, gender)
     }
 
     else if (e.nativeEvent.submitter.name === 'new') {
-      fetch("https://stat-track-db.herokuapp.com/players", {
-        method: 'POST',
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify(newplayer)
-      }).then(() => {
-        console.log('new player added')
-      })
-    }
-    else  {
-  
-  }
+    console.log('added player')
 
-  }
+    add_player(name, gender)
+    }
+
+    else if (e.nativeEvent.submitter.name === 'pop') {
+    fetch(db_url+"/players")
+    .then(resp => resp.json())
+    .then(data => {
+      if (!data.length) {
+        player_list.map((player) => {
+         return add_player(player.name,player.gender)
+        })
+      }
+    })
+    }
+   }
 
   return (
     <div>
@@ -80,8 +120,9 @@ const NewPlayer = () => {
           <option value = 'M'>M</option>
           <option value = 'F'>F</option>
         </select>
-        <button name='new'>New Player</button>
-        <button name='del'>Delete Player</button>
+        <button variant='contained' name='new'>New</button>
+        <button variant='contained' name='del'>Remove</button>
+        <button variant='contained' name='pop'>Populate</button>
       </form>
     </div>
     )
@@ -98,12 +139,12 @@ class App extends React.Component {
       posts: [],
       males: [],
       females: [],
+      
     }
   }
-
-  componentDidMount(){
-
-    fetch("https://stat-track-db.herokuapp.com/players?gender=M")
+  
+  fetch_players() {
+    fetch(db_url+"/players?gender=M")
     .then(resp => resp.json())
     .then (data => {
       let players = data.map((player) => {
@@ -112,7 +153,7 @@ class App extends React.Component {
       )
       this.setState({males:players})
     })
-    fetch("https://stat-track-db.herokuapp.com/players?gender=F")
+    fetch(db_url+"/players?gender=F")
     .then(resp => resp.json())
     .then (data => {
       let players = data.map((player) => {
@@ -123,66 +164,79 @@ class App extends React.Component {
     })
   }
 
+  componentDidMount(){   
+    this.fetch_players()
+  }
   renderPlays() {
-    return this.state.play.map((member) =>
+    return this.state.play.reverse().map((member) =>
     <DisplayPlay play={member}></DisplayPlay>
    )
   }
 
-  handlePlayerClick(props) {
-    if (passList[passList.length - 1] !== props.member) {
-      passList.push(props.member)
-      }
-  }
-  buttonClicked(name) {
-    // alert('Hello', {name})
-    if (passList.length === 0 && (name.member === 'Goal' || name.member === 'Throwaway' )) {
-    
-    }
-    else if (passList.length > 0 && (name.member === 'D')) {
-    
-    }
-    else if (passList[passList.length - 1] !== name.member) {
-    passList.push(name.member)
-    }
-  
-    
-    if (passList.length > 0 && (passList[passList.length - 1] === 'Goal' || name.member === 'Throwaway' )){
-      plays.push(passList)
-      console.log(plays)
-      passList = []
-    }
-    else {
-      console.log(this.state)
-    }
 
+  buttonClicked(props) {
+    console.log(props)
+    let currList = this.state.passes.slice()
+    currList.push(props.name)
     this.setState({
-      play: plays,
+      passes: currList
     })
-    
   }
 
+  handleAction(props) {
+    let currList = this.state.passes.slice()
+    let currPlays = this.state.play.slice()
+    if (currList.length > 0 && (props.action === 'G' || props.action ==='TA')) {
+      currList.push(props.action)
+      currPlays.push(currList)
+      this.setState({
+        play: currPlays,
+        passes:[]
+      })
+    }
+
+    else if (currList.length > 0 && props.action === "Undo") {
+      currList.pop()
+      this.setState({
+        passes:currList
+      })
+    }
+
+    else if (currList.length === 0 && props.action === "Undo" && this.state.play.length >0) {
+      currList = currPlays.pop()
+      console.log(currPlays)
+      this.setState({
+        play:currPlays,
+        passes:currList
+      })
+    }
+
+    
+    
+  }
 
 
   render() {
-    const actions = ['Goal', 'Throwaway', "D"];
+
+    const actions = ['G', 'TA', "D", "Undo"];
     const padding = 0.3
-    const femaleMembers = this.state.females.map((member) =>
+    
+    const femaleMembers = this.state.females.map((name) =>
     <Box m={padding}>
-      <Button onClick={() => this.buttonClicked({member})} variant="contained" fullWidth color='secondary'>{member}</Button>
+      <Button onClick={() => this.buttonClicked({name})} variant="contained" fullWidth color='secondary'>{name}</Button>
     </Box>
     )
-    const maleMembers = this.state.males.map((member) =>
+
+    const maleMembers = this.state.males.map((name) =>
     <Box m={padding}>
-      <Button onClick={() => this.buttonClicked({member})} variant="contained" fullWidth color='primary'>{member}</Button>
+      <Button onClick={() => this.buttonClicked({name})} variant="contained" fullWidth color='primary'>{name}</Button>
       </Box>
 
     )
     
-    const buttonActions = actions.map((member) =>
+    const buttonActions = actions.map((action) =>
     <Box m={1}>
-
-    <Button onClick={() => this.buttonClicked({member})}>{member}</Button>
+    <Button onClick={() => this.handleAction({action})} fullWidth>{action}</Button>
     </Box>
     )
     
@@ -195,7 +249,14 @@ class App extends React.Component {
       </Box>
       <Container>
       <Box m={1}>
-      <ButtonGroup size="large" aria-label="text button group">
+      <ButtonGroup 
+        
+        size="large" 
+        style={{
+        border: "none",
+        minWidth: "48%",
+      }}
+      >
         {buttonActions}
       </ButtonGroup>
       </Box>
@@ -224,6 +285,8 @@ class App extends React.Component {
       </ButtonGroup>
       </Container>
       <Container>
+      <DisplayPlay play={this.state.passes}></DisplayPlay>
+
       {this.renderPlays()}
 
       </Container>
@@ -233,25 +296,5 @@ class App extends React.Component {
   }
 }
 
-
-// function App(props) {
-
-
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//       <ButtonGroup size="large" aria-label="text button group">
-//         {buttonActions}
-//       </ButtonGroup>
-//       <ButtonGroup orientation="vertical" size='medium' variant="contained" aria-label="outlined primary button group">
-//         {buttonMembers}
-//       </ButtonGroup>
-
-
-//       </header>
-//       {displayPlays}
-//     </div>
-//   );
-// }
 
 export default App;
