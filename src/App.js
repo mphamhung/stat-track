@@ -4,7 +4,6 @@ import {Alert, Button, ButtonGroup, Container, Box} from '@mui/material';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
 
-
 const db_url = "https://stat-track-db.herokuapp.com"
 
 const actions = ['G', 'TA', "D", "Undo"];
@@ -335,8 +334,8 @@ class App extends React.Component {
       </ButtonGroup>
       </Container>
       <Container>
+      <Button onClick={() => {navigator.clipboard.writeText(this.state.play.join('\n'))}}>Output to Clipboard</Button>
       <DisplayPlay play={this.state.passes}></DisplayPlay>
-
       {this.renderPlays()}
 
       </Container>
