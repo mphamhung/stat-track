@@ -46,92 +46,6 @@ function DisplayPlay(props) {
   }
 }
 
-function delete_player(name, gender) {
-  fetch(db_url+"/players?name="+name+"?gender="+gender)
-    .then(resp => resp.json())
-    .then (data => {
-      let id = data.map((player) => {
-        return (player.id)
-      }
-      )[0]
-      fetch(db_url+"/players/"+id, {
-        method: 'DELETE',
-      }).then(() => {
-        console.log('player deleted')
-      })
-    })
-}
-
-function add_player(name, gender) {
-  if (name) {
-   
-  fetch(db_url+"/players", {
-    method: 'POST',
-    headers: { "Content-Type": "application/json"},
-    body: JSON.stringify({name, gender})
-  }).then(() => {
-    console.log('new player added')
-  })
-   
-}
-}
-
-const NewPlayer = () => {
-  const [name, setName] = React.useState('')
-  const [gender, setGender] = React.useState('M')
-
-  const handleSubmit = (e) => {
-    e.preventDefault();    
-    if (e.nativeEvent.submitter.name === 'del') {
-      console.log('deleted player')
-
-    delete_player(name, gender)
-    }
-
-    else if (e.nativeEvent.submitter.name === 'new') {
-    console.log('added player')
-
-    add_player(name, gender)
-    }
-
-    else if (e.nativeEvent.submitter.name === 'pop') {
-    fetch(db_url+"/players")
-    .then(resp => resp.json())
-    .then(data => {
-      if (!data.length) {
-        player_list.map((player) => {
-         return add_player(player.name,player.gender)
-        })
-      }
-    })
-    }
-   }
-
-  return (
-    <div>
-      <form
-      onSubmit={handleSubmit}>
-        <input
-          type = 'text'
-          value={name}
-          onChange = {(e)=> setName(e.target.value)}
-        />
-        <select
-        value = {gender}
-        onChange ={(e) => setGender(e.target.value)}>
-          <option value = 'M'>M</option>
-          <option value = 'F'>F</option>
-        </select>
-        <button variant='contained' name='new'>New</button>
-        <button variant='contained' name='del'>Remove</button>
-        <button variant='contained' name='pop'>Populate</button>
-      </form>
-    </div>
-    )
-  }
-
-
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -141,8 +55,99 @@ class App extends React.Component {
       posts: [],
       males: [],
       females: [],
-      
+      inputName: "",
+      inputGender: "M"
     }
+    this.handleTextField = this.handleTextField.bind(this);
+    this.handleGender = this.handleGender.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleTextField(e) {
+    this.setState({inputName: e.target.value})
+  }
+
+  handleGender(e) {
+    this.setState({inputGender: e.target.value})
+  }
+
+  delete_player(name, gender) {
+    console.log(db_url+"/players?name="+name+"?gender="+gender)
+    fetch(db_url+"/players?name="+name)
+      .then(resp => resp.json())
+      .then (data => {
+        let id = data.map((player) => {
+          return (player.id)
+        }
+        )[0]
+        fetch(db_url+"/players/"+id, {
+          method: 'DELETE',
+        }).then(() => {
+          this.fetch_players()
+        })
+      })
+  }
+  add_player(name, gender) {
+    if (name) {     
+      fetch(db_url+"/players", {
+        method: 'POST',
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({name, gender})
+      }).then(() => {
+        this.fetch_players()
+      }) 
+    }
+  }
+  handleSubmit(e) {
+    e.preventDefault();    
+    if (e.nativeEvent.submitter.name === 'del') {
+      console.log('deleted player')
+    this.delete_player(this.state.inputName, this.state.inputGender)
+    }
+
+    else if (e.nativeEvent.submitter.name === 'new') {
+    console.log('added player')
+
+    this.add_player(this.state.inputName, this.state.inputGender)
+    }
+
+    else if (e.nativeEvent.submitter.name === 'pop') {
+    fetch(db_url+"/players")
+    .then(resp => resp.json())
+    .then(data => {
+      if (!data.length) {
+        player_list.map((player) => {
+         return this.add_player(player.name,player.gender)
+        })
+      this.fetch_players()
+      }
+    })
+    }
+   }
+
+  renderRosterAdmin() {
+    return (
+      <div>
+        <form
+        onSubmit={this.handleSubmit}>
+          <input
+            type = 'text'
+            value={this.state.inputName}
+            onChange = {this.handleTextField}
+            name="name"
+          />
+          <select
+          value = {this.state.inputGender}
+          onChange ={this.handleGender}>
+            <option value = 'M'>M</option>
+            <option value = 'F'>F</option>
+          </select>
+          <button variant='contained' name='new'>New</button>
+          <button variant='contained' name='del'>Remove</button>
+          <button variant='contained' name='pop'>Populate</button>
+        </form>
+      </div>
+      )
   }
   
   fetch_players() {
@@ -255,7 +260,7 @@ class App extends React.Component {
   return (
     <div className="App">
       <Box m={1}>      
-      <NewPlayer></NewPlayer>
+      {this.renderRosterAdmin()}
       </Box>
       <Container>
       <Box m={1}>
