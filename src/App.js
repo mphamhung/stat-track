@@ -8,7 +8,6 @@ import React from 'react'
 const db_url = "https://stat-track-db.herokuapp.com"
 
 const actions = ['G', 'TA', "D", "Undo"];
-
 const player_list = [
   {name: "Michael", gender: "M"},
   {name: "Marco", gender: "M"},
@@ -27,8 +26,11 @@ const player_list = [
   {name: "Hanna", gender: "F"},
 ]
 
+const padding = 0.3
+
+
 function DisplayPlay(props) {
-   let text = props.play.join(' => ')
+  let text = props.play.join(' => ')
   
   if (props.play[props.play.length - 1] === 'G')
     return (
@@ -46,6 +48,23 @@ function DisplayPlay(props) {
   }
 }
 
+function DisplayPlayer(props) {
+  let name = props.player.name
+  let func = props.onClick
+  let id = props.player.id
+  let status = props.player.status
+  let color = ((props.player.gender === "M" ) ? 'primary' : 'secondary')
+  let gender = props.player.gender
+  return (
+    <Box m={padding}>
+        <Button onClick={() => func({name, id, gender})} variant="contained" fullWidth color={color} name={id} disabled={status}>{name}</Button>
+    </Box>
+  )
+  
+
+}
+
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -58,18 +77,15 @@ class App extends React.Component {
       inputName: "",
       inputGender: "M"
     }
-    this.handleTextField = this.handleTextField.bind(this);
-    this.handleGender = this.handleGender.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handlePlayerClick = this.handlePlayerClick.bind(this);
   }
 
-  handleTextField(e) {
-    this.setState({inputName: e.target.value})
+  handleChange(e) {
+    this.setState({[e.target.name]: e.target.value})
   }
 
-  handleGender(e) {
-    this.setState({inputGender: e.target.value})
-  }
 
   delete_player(name, gender) {
     console.log(db_url+"/players?name="+name+"&gender="+gender)
@@ -133,12 +149,13 @@ class App extends React.Component {
           <input
             type = 'text'
             value={this.state.inputName}
-            onChange = {this.handleTextField}
-            name="name"
+            onChange = {this.handleChange}
+            name="inputName"
           />
           <select
           value = {this.state.inputGender}
-          onChange ={this.handleGender}>
+          onChange ={this.handleChange}
+          name="inputGender">
             <option value = 'M'>M</option>
             <option value = 'F'>F</option>
           </select>
@@ -155,7 +172,7 @@ class App extends React.Component {
     .then(resp => resp.json())
     .then (data => {
       let players = data.map((player) => {
-        return (player.name)
+        return  {name:player.name, gender:player.gender, id: player.id, status: false}
       }
       )
       this.setState({males:players})
@@ -164,7 +181,7 @@ class App extends React.Component {
     .then(resp => resp.json())
     .then (data => {
       let players = data.map((player) => {
-        return (player.name)
+        return {name:player.name, gender:player.gender, id: player.id, status: false}
       }
       )
       this.setState({females:players})
@@ -174,20 +191,12 @@ class App extends React.Component {
   componentDidMount(){   
     this.fetch_players()
   }
+  
   renderPlays() {
-    return this.state.play.reverse().map((member) =>
+    let plays = this.state.play.slice()
+    return plays.reverse().map((member) =>
     <DisplayPlay play={member}></DisplayPlay>
    )
-  }
-
-
-  buttonClicked(props) {
-    console.log(props)
-    let currList = this.state.passes.slice()
-    currList.push(props.name)
-    this.setState({
-      passes: currList
-    })
   }
 
   handleAction(props) {
@@ -200,6 +209,8 @@ class App extends React.Component {
         play: currPlays,
         passes:[]
       })
+      this.setAllStatus(0)
+
     }
 
     else if (currList.length > 0 && props.action === "Undo") {
@@ -207,15 +218,19 @@ class App extends React.Component {
       this.setState({
         passes:currList
       })
+      this.setAllStatus(0)
+
     }
 
     else if (currList.length === 0 && props.action === "Undo" && this.state.play.length >0) {
       currList = currPlays.pop()
-      console.log(currPlays)
+      currList.pop()
       this.setState({
         play:currPlays,
         passes:currList
       })
+      this.setAllStatus(0)
+
     }
 
     else if (props.action === "D" && currList.length === 1 ){
@@ -225,33 +240,53 @@ class App extends React.Component {
       play: currPlays,
       passes:[]
     })
+    this.setAllStatus(0)
 
     }
-    
   }
 
+  setAllStatus(id) {
+    let male_roster = this.state.males.slice() 
+    let female_roster = this.state.females.slice()
+    for (let i = 0; i<male_roster.length; i++ ) {
+      male_roster[i].status = (male_roster[i].id === id) ? true : false
+    }
 
+    for (let i = 0; i<female_roster.length; i++ ) {
+      female_roster[i].status = (female_roster[i].id === id) ? true : false
+    }
+
+    this.setState({
+      females: female_roster,
+      males: male_roster
+    })
+  }
+  handlePlayerClick(props) {
+    let currList = this.state.passes.slice()
+    currList.push(props.name)
+
+    this.setAllStatus(props.id)
+
+    this.setState({
+      passes: currList,
+    })
+    
+    
+  }
+  
   render() {
 
-    
-    const padding = 0.3
-    
-    const femaleMembers = this.state.females.map((name) =>
-    <Box m={padding}>
-      <Button onClick={() => this.buttonClicked({name})} variant="contained" fullWidth color='secondary'>{name}</Button>
-    </Box>
+    const femaleMembers = this.state.females.map((player) =>
+    <DisplayPlayer player ={player} onClick={this.handlePlayerClick}></DisplayPlayer>
     )
 
-    const maleMembers = this.state.males.map((name) =>
-    <Box m={padding}>
-      <Button onClick={() => this.buttonClicked({name})} variant="contained" fullWidth color='primary'>{name}</Button>
-      </Box>
-
+    const maleMembers = this.state.males.map((player) =>
+    <DisplayPlayer player ={player}  onClick={this.handlePlayerClick}></DisplayPlayer>
     )
     
     const buttonActions = actions.map((action) =>
     <Box m={1}>
-    <Button onClick={() => this.handleAction({action})} fullWidth>{action}</Button>
+      <Button onClick={() => this.handleAction({action})} fullWidth>{action}</Button>
     </Box>
     )
     
