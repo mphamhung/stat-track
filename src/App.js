@@ -168,7 +168,7 @@ class App extends React.Component {
   }
   
   fetch_players() {
-    fetch(db_url+"/players?gender=M")
+    fetch(db_url+"/players?gender=M&_sort=name")
     .then(resp => resp.json())
     .then (data => {
       let players = data.map((player) => {
@@ -177,7 +177,7 @@ class App extends React.Component {
       )
       this.setState({males:players})
     })
-    fetch(db_url+"/players?gender=F")
+    fetch(db_url+"/players?gender=F&_sort=name")
     .then(resp => resp.json())
     .then (data => {
       let players = data.map((player) => {
