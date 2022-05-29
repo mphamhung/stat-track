@@ -72,8 +72,8 @@ class App extends React.Component {
   }
 
   delete_player(name, gender) {
-    console.log(db_url+"/players?name="+name+"?gender="+gender)
-    fetch(db_url+"/players?name="+name)
+    console.log(db_url+"/players?name="+name+"&gender="+gender)
+    fetch(db_url+"/players?name="+name+"&gender="+gender)
       .then(resp => resp.json())
       .then (data => {
         let id = data.map((player) => {
