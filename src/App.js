@@ -6,7 +6,7 @@ import React from 'react'
 
 const db_url = "https://stat-track-db.herokuapp.com"
 
-const actions = ['G', 'TA', "D", "Undo"];
+const actions = ['G', 'TA', "D", "Undo", "AG"];
 const player_list = [
   {name: "Michael", gender: "M"},
   {name: "Marco", gender: "M"},
@@ -40,6 +40,11 @@ function DisplayPlay(props) {
     <Alert severity='warning'>{text}</Alert>
     )
   }
+  else if (props.play[props.play.length - 1] === 'AG'){
+    return (
+    <Alert severity='error'>{text}</Alert>
+    )
+  }
   else {
     return (
       <Alert severity='info'>{text}</Alert>
@@ -59,9 +64,28 @@ function DisplayPlayer(props) {
         <Button onClick={() => func({name, id, gender})} variant="contained" fullWidth color={color} name={id} disabled={status}>{name}</Button>
     </Box>
   )
-  
-
 }
+
+
+function DisplayScore(props) {
+  let plays = props.plays.slice()
+  let home = plays.reduce((total, play) => {
+    let toAdd = (play[play.length - 1] === "G") ? 1 : 0
+    return total + toAdd
+  }, 0)
+  let away = plays.reduce((total, play) => {
+    let toAdd = (play[play.length - 1] === "AG") ? 1 : 0
+    return total + toAdd
+  }, 0)
+  console.log(home)
+
+  return (
+    <Button m={padding} disabled>{home} : {away}
+    </Button>
+  )
+}
+
+
 
 
 class App extends React.Component {
@@ -206,7 +230,7 @@ class App extends React.Component {
   componentDidMount(){   
     this.fetch_players()
     var possesions = sessionStorage.getItem("possesions")
-    console.log(JSON.parse(possesions))
+    // console.log(JSON.parse(possesions))
     if (possesions !== null) {
       this.setState(
         {play: JSON.parse(possesions)}
@@ -269,6 +293,17 @@ class App extends React.Component {
 
     }
 
+    else if(props.action === "AG") {
+      currList = []
+      currList.push(props.action)
+      currPlays.push(currList)
+      this.setState({
+        play: currPlays,
+        passes:[]
+      })
+    this.setAllStatus(0)
+    }
+
     sessionStorage.setItem("possesions", JSON.stringify(currPlays));
   }
 
@@ -288,6 +323,7 @@ class App extends React.Component {
       males: male_roster
     })
   }
+
   handlePlayerClick(props) {
     let currList = this.state.passes.slice()
     currList.push(props.name)
@@ -300,7 +336,8 @@ class App extends React.Component {
     
     
   }
-  
+
+
   render() {
 
     const femaleMembers = this.state.females.map((player) =>
@@ -335,11 +372,12 @@ class App extends React.Component {
       }}
       >
         {buttonActions}
+        <DisplayScore plays={this.state.play}></DisplayScore>
+
       </ButtonGroup>
       </Box>
       </Container>
-      <Container
-   >
+      <Container>
       <ButtonGroup 
       orientation="vertical" 
       size='large' 
