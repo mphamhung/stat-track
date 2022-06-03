@@ -79,6 +79,8 @@ class App extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePlayerClick = this.handlePlayerClick.bind(this);
+
+    
   }
 
   handleChange(e) {
@@ -113,6 +115,10 @@ class App extends React.Component {
       }) 
     }
   }
+
+  del_plays() {
+
+  }
   handleSubmit(e) {
     e.preventDefault();    
     if (e.nativeEvent.submitter.name === 'del') {
@@ -126,6 +132,14 @@ class App extends React.Component {
     this.add_player(this.state.inputName, this.state.inputGender)
     }
 
+    else if (e.nativeEvent.submitter.name === 'del_plays') {
+      console.log('delete plays!')
+      this.setState(
+        {play: []}
+        )
+    
+      sessionStorage.setItem("possesions", JSON.stringify([]));
+    }
     else if (e.nativeEvent.submitter.name === 'pop') {
     fetch(db_url+"/players")
     .then(resp => resp.json())
@@ -161,6 +175,8 @@ class App extends React.Component {
           <button variant='contained' name='new'>New</button>
           <button variant='contained' name='del'>Remove</button>
           <button variant='contained' name='pop'>Populate</button>
+          <button variant='contained' name='del_plays'>Del Plays</button>
+
         </form>
       </div>
       )
@@ -189,6 +205,16 @@ class App extends React.Component {
 
   componentDidMount(){   
     this.fetch_players()
+    var possesions = sessionStorage.getItem("possesions")
+    console.log(JSON.parse(possesions))
+    if (possesions !== null) {
+      this.setState(
+        {play: JSON.parse(possesions)}
+        )
+    }
+    
+
+    
   }
   
   renderPlays() {
@@ -242,6 +268,8 @@ class App extends React.Component {
     this.setAllStatus(0)
 
     }
+
+    sessionStorage.setItem("possesions", JSON.stringify(currPlays));
   }
 
   setAllStatus(id) {
