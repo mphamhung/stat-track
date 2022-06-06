@@ -1,5 +1,9 @@
 import './App.css';
-import {Alert, Button, ButtonGroup, Container, Box} from '@mui/material';
+import {Button, ButtonGroup, Container, Box} from '@mui/material';
+
+import Possession from './components/Possession'
+import PlayerButton from './components/PlayerButton';
+import ScoreBoard from './components/ScoreBoard'
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
@@ -24,69 +28,6 @@ const player_list = [
   {name: "Erika", gender: "F"},
   {name: "Hanna", gender: "F"},
 ]
-
-const padding = 0.3
-
-
-function DisplayPlay(props) {
-  let text = props.play.join(' => ')
-  
-  if (props.play[props.play.length - 1] === 'G')
-    return (
-      <Alert severity='success'>{text}</Alert>
-    )
-  else if (props.play[props.play.length - 1] === 'TA'){
-    return (
-    <Alert severity='warning'>{text}</Alert>
-    )
-  }
-  else if (props.play[props.play.length - 1] === 'AG'){
-    return (
-    <Alert severity='error'>{text}</Alert>
-    )
-  }
-  else {
-    return (
-      <Alert severity='info'>{text}</Alert>
-    )
-  }
-}
-
-function DisplayPlayer(props) {
-  let name = props.player.name
-  let func = props.onClick
-  let id = props.player.id
-  let status = props.player.status
-  let color = ((props.player.gender === "M" ) ? 'primary' : 'secondary')
-  let gender = props.player.gender
-  return (
-    <Box m={padding}>
-        <Button onClick={() => func({name, id, gender})} variant="contained" fullWidth color={color} name={id} disabled={status}>{name}</Button>
-    </Box>
-  )
-}
-
-
-function DisplayScore(props) {
-  let plays = props.plays.slice()
-  let home = plays.reduce((total, play) => {
-    let toAdd = (play[play.length - 1] === "G") ? 1 : 0
-    return total + toAdd
-  }, 0)
-  let away = plays.reduce((total, play) => {
-    let toAdd = (play[play.length - 1] === "AG") ? 1 : 0
-    return total + toAdd
-  }, 0)
-  console.log(home)
-
-  return (
-    <Button m={padding} disabled>{home} : {away}
-    </Button>
-  )
-}
-
-
-
 
 class App extends React.Component {
   constructor(props) {
@@ -244,7 +185,7 @@ class App extends React.Component {
   renderPlays() {
     let plays = this.state.play.slice()
     return plays.reverse().map((member) =>
-    <DisplayPlay play={member}></DisplayPlay>
+        <Possession play={member}></Possession>
    )
   }
 
@@ -341,11 +282,11 @@ class App extends React.Component {
   render() {
 
     const femaleMembers = this.state.females.map((player) =>
-    <DisplayPlayer player ={player} onClick={this.handlePlayerClick}></DisplayPlayer>
+    <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>
     )
 
     const maleMembers = this.state.males.map((player) =>
-    <DisplayPlayer player ={player}  onClick={this.handlePlayerClick}></DisplayPlayer>
+    <PlayerButton player ={player}  onClick={this.handlePlayerClick}></PlayerButton>
     )
     
     const buttonActions = actions.map((action) =>
@@ -372,7 +313,7 @@ class App extends React.Component {
       }}
       >
         {buttonActions}
-        <DisplayScore plays={this.state.play}></DisplayScore>
+        <ScoreBoard plays={this.state.play}></ScoreBoard>
 
       </ButtonGroup>
       </Box>
@@ -401,7 +342,7 @@ class App extends React.Component {
       </Container>
       <Container>
       <Button onClick={() => {navigator.clipboard.writeText(this.state.play.join('\n'))}}>Output to Clipboard</Button>
-      <DisplayPlay play={this.state.passes}></DisplayPlay>
+      <Possession play={this.state.passes}></Possession>
       {this.renderPlays()}
 
       </Container>
