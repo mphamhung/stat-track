@@ -4,6 +4,8 @@ import {Button, ButtonGroup, Container, Box} from '@mui/material';
 import Possession from './components/Possession'
 import PlayerButton from './components/PlayerButton';
 import ScoreBoard from './components/ScoreBoard'
+import GameSummary from './components/GameSummary'
+
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
@@ -341,11 +343,17 @@ class App extends React.Component {
       </ButtonGroup>
       </Container>
       <Container>
-      <Button onClick={() => {navigator.clipboard.writeText(this.state.play.join('\n'))}}>Output to Clipboard</Button>
+
       <Possession play={this.state.passes}></Possession>
       {this.renderPlays()}
 
       </Container>
+
+      <Container>
+      <GameSummary m_players = {this.state.males} f_players = {this.state.females} possessions={this.state.play}></GameSummary> 
+
+      </Container>
+
 
     </div>
   );
