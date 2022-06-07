@@ -306,16 +306,22 @@ class App extends React.Component {
       </Box>
       <Container>
       <Box m={1}>
+      <ButtonGroup >
+
+      <ScoreBoard plays={this.state.play}></ScoreBoard>
+
+      </ButtonGroup>
+
+
       <ButtonGroup 
         
-        size="large" 
+        size="medium" 
         style={{
         border: "none",
-        minWidth: "48%",
+        minWidth: "45%",
       }}
       >
         {buttonActions}
-        <ScoreBoard plays={this.state.play}></ScoreBoard>
 
       </ButtonGroup>
       </Box>
