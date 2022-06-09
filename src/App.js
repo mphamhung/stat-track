@@ -29,6 +29,7 @@ const player_list = [
   {name: "Abby", gender: "F"},
   {name: "Erika", gender: "F"},
   {name: "Hanna", gender: "F"},
+  {name: "Viv", gender: "F"},
 ]
 
 class App extends React.Component {
