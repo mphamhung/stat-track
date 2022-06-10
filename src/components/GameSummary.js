@@ -117,7 +117,7 @@ function ScoreBoard(props) {
 
     rows.sort((a,b) => b[sortKey] - a[sortKey] )
 
-    console.log(sortKey)
+    
     return (
         <TableContainer component={Paper}>
           <Table  sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -154,7 +154,17 @@ function ScoreBoard(props) {
             </TableBody>
           </Table>
 
-          <Button onClick={() => {navigator.clipboard.writeText(rows)}}>Output to Clipboard</Button>
+          <Button onClick={() => {
+              navigator.clipboard.writeText(
+                [Object.keys(rows[0]).join('\t')].concat(
+                
+                rows.map((row) => {
+                  return Object.values(row).join('\t')
+                })
+                )
+                .join('\n'))
+              }
+            }>Output to Clipboard</Button>
 
         </TableContainer>
       );
