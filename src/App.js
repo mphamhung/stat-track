@@ -12,7 +12,7 @@ import React from 'react'
 
 const db_url = "https://stat-track-db.herokuapp.com"
 
-const actions = ['G', 'TA', "D", "Undo", "AG"];
+const actions = ['TA', "D", "Drop", "Undo"];
 const player_list = [
   {name: "Michael", gender: "M"},
   {name: "Marco", gender: "M"},
@@ -193,9 +193,21 @@ class App extends React.Component {
   }
 
   handleAction(props) {
+    console.log(props)
     let currList = this.state.passes.slice()
     let currPlays = this.state.play.slice()
     if (currList.length > 0 && (props.action === 'G' || props.action ==='TA')) {
+      currList.push(props.action)
+      currPlays.push(currList)
+      this.setState({
+        play: currPlays,
+        passes:[]
+      })
+      this.setAllStatus(0)
+
+    }
+
+    else if (currList.length > 0 && (props.action ==='Drop')) {
       currList.push(props.action)
       currPlays.push(currList)
       this.setState({
@@ -307,11 +319,21 @@ class App extends React.Component {
       </Box>
       <Container>
       <Box m={1}>
+      <Container>
+
       <ButtonGroup >
-
+      <Box m={1}>
+      <Button onClick={() => this.handleAction({action:"G"})} fullWidth>G</Button>
+      </Box>
+      <Box m={1}>
       <ScoreBoard plays={this.state.play}></ScoreBoard>
+      </Box>
 
+      <Box m={1}>
+      <Button onClick={() => this.handleAction({action:"AG"})} fullWidth>AG</Button>
+      </Box>
       </ButtonGroup>
+      </Container>
 
 
       <ButtonGroup 

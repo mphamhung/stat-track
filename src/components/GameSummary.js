@@ -8,7 +8,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import React from 'react'
+import React, { useState } from 'react'
 
 function createData(
     name: string,
@@ -17,11 +17,17 @@ function createData(
     assists: number,
     ds: number,
     tas: number,
+    drops: number
   ) {
-    return { name, touches, goals, assists, ds, tas };
+    return { name, touches, goals, assists, ds, tas, drops };
   }
   
+
 function ScoreBoard(props) {
+    // const initialStae = () => [];
+    const [sortKey, setSortKey] = useState("Name")    
+
+
     const touches = new Map(
         props.m_players.map((player) => {
            return [player.name,0]
@@ -62,27 +68,39 @@ function ScoreBoard(props) {
             return [player.name,0]
         }))
     )
-    var last = ""
-    var last2 = ""
+
+    const Drops = new Map(
+        props.m_players.map((player) => {
+          return [player.name,0]
+        }).concat(
+        props.f_players.map((player) => {
+            return [player.name,0]
+        }))
+    )
+
     props.possessions.slice().flat().map((e) => {
         if (touches.has(e)) {
             touches.set(e, touches.get(e)+1)
         }
-
-        else if (e === "G") {
-            goals.set(last, goals.get(last)+1)
-            assists.set(last2,goals.get(last2)+1)
-        }       
-
-        else if (e === "D") {
-            Ds.set(last, Ds.get(last)+1)
-        }  
-        else if (e === "TAs") {
-            TAs.set(last, TAs.get(last)+1)
-        }  
-        last = e
-        last2 = last
         return 0;
+    })
+
+    props.possessions.slice().map((e) => {
+      if (e[e.length-1] === "G") {
+        goals.set(e[e.length-2], goals.get(e[e.length-2])+1)
+        assists.set(e[e.length-3],goals.get(e[e.length-3])+1)
+      }
+      else if (e[e.length-1] === "D") {
+          Ds.set(e[e.length-2], Ds.get(e[e.length-2])+1)
+        }  
+      else if (e[e.length-1] === "TA") {
+          TAs.set(e[e.length-2], TAs.get(e[e.length-2])+1)
+      }  
+      else if (e[e.length-1] === "Drop") {
+          Drops.set(e[e.length-2], TAs.get(e[e.length-2])+1)
+      }  
+      return 0;
+
     })
  
     const rows = []
@@ -92,22 +110,26 @@ function ScoreBoard(props) {
                     goals.get(name),
                     assists.get(name),
                     Ds.get(name),
-                    TAs.get(name)
+                    TAs.get(name),
+                    Drops.get(name)
         ))
     }
 
-    
+    rows.sort((a,b) => b[sortKey] - a[sortKey] )
+
+    console.log(sortKey)
     return (
         <TableContainer component={Paper}>
           <Table  sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Gs</TableCell>
-                <TableCell align="right">As</TableCell>
-                <TableCell align="right">Ds</TableCell>
-                <TableCell align="right">Tas</TableCell>
-                <TableCell align="right">Touches</TableCell>
+                <TableCell onClick={() => setSortKey('name')}>Name</TableCell>
+                <TableCell align="right" onClick={() => setSortKey('goals')}>Gs</TableCell>
+                <TableCell align="right" onClick={() => setSortKey('assists')}>As</TableCell>
+                <TableCell align="right" onClick={() => setSortKey('ds')}>Ds</TableCell>
+                <TableCell align="right" onClick={() => setSortKey('tas')}>Tas</TableCell>
+                <TableCell align="right" onClick={() => setSortKey('drops')}>Drops</TableCell>
+                <TableCell align="right" onClick={() => setSortKey('touches')}>Touches</TableCell>
 
               </TableRow>
             </TableHead>
@@ -124,6 +146,7 @@ function ScoreBoard(props) {
                   <TableCell align="right">{row.assists}</TableCell>
                   <TableCell align="right">{row.ds}</TableCell>
                   <TableCell align="right">{row.tas}</TableCell>
+                  <TableCell align="right">{row.drops}</TableCell>
                   <TableCell align="right">{row.touches}</TableCell>
 
                 </TableRow>

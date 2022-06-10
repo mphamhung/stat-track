@@ -17,6 +17,11 @@ function Possession(props) {
       <Alert severity='warning'>{text}</Alert>
       )
     }
+    else if (props.play[props.play.length - 1] === 'Drop'){
+      return (
+      <Alert severity='warning'>{text}</Alert>
+      )
+    }
     else if (props.play[props.play.length - 1] === 'AG'){
       return (
       <Alert severity='error'>{text}</Alert>
