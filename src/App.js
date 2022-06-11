@@ -247,9 +247,7 @@ class TrackStats extends React.Component {
         method: 'POST',
         headers: { "Content-Type": "application/json"},
         body: JSON.stringify({team_name, versus, date, possessions})
-      }).then(
-        this.fetch_plays()
-      )
+      })
       console.log('pushed plays!')
 
     }
