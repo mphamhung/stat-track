@@ -11,13 +11,13 @@ import Paper from '@mui/material/Paper';
 import React, { useState } from 'react'
 
 function createData(
-    name: string,
-    touches: number,
-    goals: number,
-    assists: number,
-    ds: number,
-    tas: number,
-    drops: number
+    name,
+    touches,
+    goals,
+    assists,
+    ds,
+    tas,
+    drops
   ) {
     return { name, touches, goals, assists, ds, tas, drops };
   }
