@@ -15,7 +15,7 @@ function PlayerButton(props) {
     let gender = props.player.gender
     return (
       <Box m={padding}>
-          <Button onClick={() => func({name, id, gender})} variant="contained" fullWidth color={color} name={id} disabled={status}>{name}</Button>
+          <Button onClick={() => func({name, id, gender})} variant="contained" fullWidth color={color} name={id} key={id} disabled={status}>{name}</Button>
       </Box>
     )
   }

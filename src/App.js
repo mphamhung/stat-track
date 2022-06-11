@@ -9,6 +9,7 @@ import GameSummary from './components/GameSummary'
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
+import {useSearchParams} from  'react-router-dom'
 
 const db_url = "https://stat-track-db.herokuapp.com"
 
@@ -32,10 +33,24 @@ const player_list = [
   {name: "Viv", gender: "F"},
 ]
 
-class App extends React.Component {
+function App(prop) {
+  const [searchParams] = useSearchParams() 
+  let home = searchParams.get('home')
+  let away = searchParams.get('away')
+  let date = searchParams.get('date')
+  return(
+    <TrackStats home={home} away={away} date={date}></TrackStats>
+  )
+}
+
+class TrackStats extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      team: (props.home)? props.home : "wth",
+      date: (props.date)? props.date : new Date().toISOString(),
+      away: (props.away)? props.away : "default_away_name",
+      game_id: 0,
       passes : [],
       play: [],
       posts: [],
@@ -57,8 +72,8 @@ class App extends React.Component {
 
 
   delete_player(name, gender) {
-    console.log(db_url+"/players?name="+name+"&gender="+gender)
-    fetch(db_url+"/players?name="+name+"&gender="+gender)
+    console.log(db_url+"/players?name="+name+"&gender="+gender+"&team_name="+this.state.team)
+    fetch(db_url+"/players?name="+name+"&gender="+gender+"&team_name="+this.state.team)
       .then(resp => resp.json())
       .then (data => {
         let id = data.map((player) => {
@@ -73,20 +88,18 @@ class App extends React.Component {
       })
   }
   add_player(name, gender) {
+    let team_name = this.state.team
     if (name) {     
       fetch(db_url+"/players", {
         method: 'POST',
         headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({name, gender})
+        body: JSON.stringify({name, gender, team_name})
       }).then(() => {
         this.fetch_players()
       }) 
     }
   }
 
-  del_plays() {
-
-  }
   handleSubmit(e) {
     e.preventDefault();    
     if (e.nativeEvent.submitter.name === 'del') {
@@ -102,14 +115,30 @@ class App extends React.Component {
 
     else if (e.nativeEvent.submitter.name === 'del_plays') {
       console.log('delete plays!')
-      this.setState(
-        {play: []}
-        )
+      let team_name = this.state.team
+      let versus = this.state.away
+      let possessions = []
+      let date = this.state.date
+      let id = this.state.game_id
+      fetch(db_url+"/games/"+id, {
+        method: 'PUT',
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({team_name, versus, date, possessions})
+      })
+      this.setState({play:[]})
+
     
-      sessionStorage.setItem("possesions", JSON.stringify([]));
+      // sessionStorage.setItem("possesions", JSON.stringify([]));
+    }
+
+    else if (e.nativeEvent.submitter.name === 'push_plays') {
+      this.pushPlaytoDB()
+      
+    
+      // sessionStorage.setItem("possesions", JSON.stringify([]));
     }
     else if (e.nativeEvent.submitter.name === 'pop') {
-    fetch(db_url+"/players")
+    fetch(db_url+"/players?team_name="+this.state.team)
     .then(resp => resp.json())
     .then(data => {
       if (!data.length) {
@@ -151,7 +180,7 @@ class App extends React.Component {
   }
   
   fetch_players() {
-    fetch(db_url+"/players?gender=M&_sort=name")
+    fetch(db_url+"/players?gender=M&team_name="+this.state.team+"&_sort=name")
     .then(resp => resp.json())
     .then (data => {
       let players = data.map((player) => {
@@ -160,7 +189,7 @@ class App extends React.Component {
       )
       this.setState({males:players})
     })
-    fetch(db_url+"/players?gender=F&_sort=name")
+    fetch(db_url+"/players?gender=F&_sort=name&team_name="+this.state.team)
     .then(resp => resp.json())
     .then (data => {
       let players = data.map((player) => {
@@ -171,18 +200,59 @@ class App extends React.Component {
     })
   }
 
+  fetch_plays() {
+    fetch(db_url+"/games?team_name="+this.state.team+"&versus="+this.state.away+"&_sort=date")
+    .then(resp => resp.json())
+    .then (data => {
+      console.log(data)
+
+      if (data.length) {
+      let possessions = data[0].possessions
+      let date = data[0].date
+      let id = data[0].id
+      console.log(possessions)
+
+      this.setState({play: possessions, date:date, game_id:id})
+      }
+
+    })
+
+  }
+
   componentDidMount(){   
     this.fetch_players()
-    var possesions = sessionStorage.getItem("possesions")
-    // console.log(JSON.parse(possesions))
-    if (possesions !== null) {
-      this.setState(
-        {play: JSON.parse(possesions)}
-        )
-    }
-    
+    this.fetch_plays()
+   
+  }
 
-    
+  pushPlaytoDB() {
+    let team_name = this.state.team
+    let versus = this.state.away
+    let possessions = this.state.play.slice()
+    let date = this.state.date
+    let id = this.state.game_id
+    console.log(possessions)
+    if (id) {
+      fetch(db_url+"/games/"+id, {
+        method: 'PUT',
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({team_name, versus, date, possessions})
+      })
+      console.log('updated plays!')
+
+    }
+
+    else {
+      fetch(db_url+"/games/", {
+        method: 'POST',
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({team_name, versus, date, possessions})
+      }).then(
+        this.fetch_plays()
+      )
+      console.log('pushed plays!')
+
+    }
   }
   
   renderPlays() {
@@ -260,7 +330,9 @@ class App extends React.Component {
     this.setAllStatus(0)
     }
 
-    sessionStorage.setItem("possesions", JSON.stringify(currPlays));
+    this.pushPlaytoDB();
+
+    // sessionStorage.setItem("possesions", JSON.stringify(currPlays));
   }
 
   setAllStatus(id) {
@@ -306,49 +378,51 @@ class App extends React.Component {
     
     const buttonActions = actions.map((action) =>
     <Box m={1}>
-      <Button onClick={() => this.handleAction({action})} fullWidth>{action}</Button>
+      <Button onClick={() => this.handleAction({action})} fullWidth id={action}>{action}</Button>
     </Box>
     )
     
     
- 
+    var timestamp = Date.parse(this.state.date)
+    var readableDate = new Date(timestamp).toDateString()
+    
   return (
     <div className="App">
       <Box m={1}>      
       {this.renderRosterAdmin()}
       </Box>
+      <Box>
+      game vs {this.state.away} on {readableDate}
+      </Box>
       <Container>
-      <Box m={1}>
-      <Container>
-
       <ButtonGroup >
       <Box m={1}>
-      <Button onClick={() => this.handleAction({action:"G"})} fullWidth>G</Button>
+      <Button onClick={() => this.handleAction({action:"G"})} fullWidth key="G">G</Button>
       </Box>
       <Box m={1}>
       <ScoreBoard plays={this.state.play}></ScoreBoard>
       </Box>
 
       <Box m={1}>
-      <Button onClick={() => this.handleAction({action:"AG"})} fullWidth>AG</Button>
+      <Button onClick={() => this.handleAction({action:"AG"})} fullWidth key="AG">AG</Button>
       </Box>
       </ButtonGroup>
+      
       </Container>
+      <Container>
 
-
+      <Box m={1}>
       <ButtonGroup 
-        
-        size="medium" 
+          size="medium" 
         style={{
         border: "none",
-        minWidth: "45%",
       }}
       >
         {buttonActions}
-
       </ButtonGroup>
       </Box>
       </Container>
+
       <Container>
       <ButtonGroup 
       orientation="vertical" 
