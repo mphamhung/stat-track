@@ -88,7 +88,7 @@ function ScoreBoard(props) {
     props.possessions.slice().map((e) => {
       if (e[e.length-1] === "G") {
         goals.set(e[e.length-2], goals.get(e[e.length-2])+1)
-        assists.set(e[e.length-3],goals.get(e[e.length-3])+1)
+        assists.set(e[e.length-3], assists.get(e[e.length-3])+1)
       }
       else if (e[e.length-1] === "D") {
           Ds.set(e[e.length-2], Ds.get(e[e.length-2])+1)
@@ -97,7 +97,7 @@ function ScoreBoard(props) {
           TAs.set(e[e.length-2], TAs.get(e[e.length-2])+1)
       }  
       else if (e[e.length-1] === "Drop") {
-          Drops.set(e[e.length-2], TAs.get(e[e.length-2])+1)
+          Drops.set(e[e.length-2], Drops.get(e[e.length-2])+1)
       }  
       return 0;
 

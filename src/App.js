@@ -11,7 +11,7 @@ import GameSummary from './components/GameSummary'
 import React from 'react'
 import {useSearchParams} from  'react-router-dom'
 
-const db_url = "https://stat-track-db.herokuapp.com"
+const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 
 const actions = ['TA', "D", "Drop", "Undo"];
 const player_list = [
