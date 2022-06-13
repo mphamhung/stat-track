@@ -103,7 +103,7 @@ function LandingPage(props) {
                 <AddBox fontSize='large' name='new' onClick={e => handleSubmit(e)}></AddBox>
             </Button>
             </ButtonGroup>
-            {uID && 
+            {uID ? 
                 <ListItemButton color="primary" key='gameid'>
                 <Link to={{
                 pathname:"/game/?home="+home+"&versus="+away+"&date="+dateId+"&uID="+uID,
@@ -111,7 +111,7 @@ function LandingPage(props) {
                 onClick={e => createGame()}
                 >
                 Go to new game ({home} vs {away} {uID})</Link>
-                </ListItemButton>
+                </ListItemButton> : <p></p>
             }
         </Container>
             

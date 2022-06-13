@@ -42,8 +42,9 @@ function App(prop) {
   let home = searchParams.get('home')
   let away = searchParams.get('versus')
   let uID = searchParams.get('uID')
-
   let date = searchParams.get('date')
+
+  
   return(
     <TrackStats home={home} versus={away} date={date} uID={uID}></TrackStats>
   )
@@ -265,8 +266,7 @@ class TrackStats extends React.Component {
    )
   }
 
-  handleAction(props) {
-    // console.log(props)
+  handleActions(props) {
     let currList = this.state.passes.slice()
     let currPlays = this.state.play.slice()
     if (currList.length > 0 && (props.action === 'G' || props.action ==='TA')) {
@@ -332,8 +332,11 @@ class TrackStats extends React.Component {
       })
     this.setAllStatus(0)
     }
-
-    this.pushPlaytoDB();
+  }
+  async handleAction(props) {
+    await this.handleActions(props)
+    this.pushPlaytoDB() 
+    // console.log(props)
 
     // sessionStorage.setItem("possesions", JSON.stringify(currPlays));
   }
