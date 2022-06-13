@@ -10,26 +10,26 @@ function Possession(props) {
     
     if (props.play[props.play.length - 1] === 'G')
       return (
-        <Alert severity='success'>{text}</Alert>
+        <Alert onClick={props.onClick} severity='success'>{text}</Alert>
       )
     else if (props.play[props.play.length - 1] === 'TA'){
       return (
-      <Alert severity='warning'>{text}</Alert>
+      <Alert onClick={props.onClick} severity='warning'>{text}</Alert>
       )
     }
     else if (props.play[props.play.length - 1] === 'Drop'){
       return (
-      <Alert severity='warning'>{text}</Alert>
+      <Alert onClick={props.onClick} severity='warning'>{text}</Alert>
       )
     }
     else if (props.play[props.play.length - 1] === 'AG'){
       return (
-      <Alert severity='error'>{text}</Alert>
+      <Alert onClick={props.onClick} severity='error'>{text}</Alert>
       )
     }
     else {
       return (
-        <Alert severity='info'>{text}</Alert>
+        <Alert onClick={props.onClick} severity='info'>{text}</Alert>
       )
     }
   }

@@ -1,11 +1,14 @@
 import './App.css';
-import {Button, ButtonGroup, Container, Box} from '@mui/material';
+import {Button, ButtonGroup, Container, Box,Grid} from '@mui/material';
+import { Link } from "react-router-dom";
 
 import Possession from './components/Possession'
 import PlayerButton from './components/PlayerButton';
 import ScoreBoard from './components/ScoreBoard'
 import GameSummary from './components/GameSummary'
-
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
@@ -31,15 +34,18 @@ const player_list = [
   {name: "Erika", gender: "F"},
   {name: "Hanna", gender: "F"},
   {name: "Viv", gender: "F"},
-]
+];
+
 
 function App(prop) {
   const [searchParams] = useSearchParams() 
   let home = searchParams.get('home')
-  let away = searchParams.get('away')
+  let away = searchParams.get('versus')
+  let uID = searchParams.get('uID')
+
   let date = searchParams.get('date')
   return(
-    <TrackStats home={home} away={away} date={date}></TrackStats>
+    <TrackStats home={home} versus={away} date={date} uID={uID}></TrackStats>
   )
 }
 
@@ -48,22 +54,25 @@ class TrackStats extends React.Component {
     super(props);
     this.state = {
       team: (props.home)? props.home : "wth",
-      date: (props.date)? props.date : new Date().toISOString(),
-      away: (props.away)? props.away : "default_away_name",
-      game_id: 0,
+      date: (props.date)? props.date : 'January-01-2022',
+      away: (props.versus)? props.versus : "default_away_name",
+      game_id: (props.uID)? props.uID : 0,
+      db_id: 0,
       passes : [],
       play: [],
       posts: [],
       males: [],
       females: [],
       inputName: "",
-      inputGender: "M"
+      inputGender: "M",
+      showRosterAdmin: true, 
+      showAllPossessions: true,
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePlayerClick = this.handlePlayerClick.bind(this);
 
-    
+
   }
 
   handleChange(e) {
@@ -119,11 +128,12 @@ class TrackStats extends React.Component {
       let versus = this.state.away
       let possessions = []
       let date = this.state.date
-      let id = this.state.game_id
+      let id = this.state.db_id
+      let uID = this.state.game_id
       fetch(db_url+"/games/"+id, {
         method: 'PUT',
         headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({team_name, versus, date, possessions})
+        body: JSON.stringify({team_name, versus, date, possessions, uID})
       })
       this.setState({play:[]})
 
@@ -173,7 +183,6 @@ class TrackStats extends React.Component {
           <button variant='contained' name='del'>Remove</button>
           <button variant='contained' name='pop'>Populate</button>
           <button variant='contained' name='del_plays'>Del Plays</button>
-
         </form>
       </div>
       )
@@ -200,29 +209,34 @@ class TrackStats extends React.Component {
     })
   }
 
-  fetch_plays() {
-    fetch(db_url+"/games?team_name="+this.state.team+"&versus="+this.state.away+"&_sort=date")
+  fetchGame(team, versus, date, uid) {
+    fetch(db_url+"/games?team_name="+team+"&versus="+versus+"&date="+date+"&uID="+uid)
     .then(resp => resp.json())
-    .then (data => {
-      console.log(data)
-
-      if (data.length) {
-      let possessions = data[0].possessions
-      let date = data[0].date
-      let id = data[0].id
-      console.log(possessions)
-
-      this.setState({play: possessions, date:date, game_id:id})
+    .then(data => {
+      if (!data.length){
+        
+        
       }
 
+      else {
+        let possessions = data[0].possessions
+        let date = data[0].date
+        let id = data[0].id
+        // console.log(possessions)
+        this.setState({play: possessions, date:date, db_id:id})
+
+      }
+
+      
     })
 
   }
 
+  
   componentDidMount(){   
     this.fetch_players()
-    this.fetch_plays()
-   
+    // await this.fetch_plays()
+    this.fetchGame(this.state.team, this.state.away, this.state.date, this.state.game_id)
   }
 
   pushPlaytoDB() {
@@ -230,27 +244,18 @@ class TrackStats extends React.Component {
     let versus = this.state.away
     let possessions = this.state.play.slice()
     let date = this.state.date
-    let id = this.state.game_id
-    console.log(possessions)
-    if (id) {
-      fetch(db_url+"/games/"+id, {
-        method: 'PUT',
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({team_name, versus, date, possessions})
-      })
-      console.log('updated plays!')
+    let id = this.state.db_id
+    let uID = this.state.game_id
+    // console.log(possessions)
 
-    }
+    fetch(db_url+"/games/"+id, {
+      method: 'PUT',
+      headers: { "Content-Type": "application/json"},
+      body: JSON.stringify({team_name, versus, date, possessions, uID})
+    })
+    console.log('updated plays!')
 
-    else {
-      fetch(db_url+"/games/", {
-        method: 'POST',
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({team_name, versus, date, possessions})
-      })
-      console.log('pushed plays!')
-
-    }
+    
   }
   
   renderPlays() {
@@ -261,7 +266,7 @@ class TrackStats extends React.Component {
   }
 
   handleAction(props) {
-    console.log(props)
+    // console.log(props)
     let currList = this.state.passes.slice()
     let currPlays = this.state.play.slice()
     if (currList.length > 0 && (props.action === 'G' || props.action ==='TA')) {
@@ -376,22 +381,52 @@ class TrackStats extends React.Component {
     
     const buttonActions = actions.map((action) =>
     <Box m={1}>
-      <Button onClick={() => this.handleAction({action})} fullWidth id={action}>{action}</Button>
+      <Button onClick={() => this.handleAction({action})} fullWidth id={action} key={action}>{action}</Button>
     </Box>
     )
     
-    
-    var timestamp = Date.parse(this.state.date)
-    var readableDate = new Date(timestamp).toDateString()
+  
     
   return (
     <div className="App">
-      <Box m={1}>      
-      {this.renderRosterAdmin()}
-      </Box>
+      <Grid container spacing ={2}>
+      <Grid item xs={2}>
+        
+        <Link to={{
+                pathname:"/",
+                }}
+                ><HomeRoundedIcon fontSize='large'> </HomeRoundedIcon>
+                </Link>
+          
+      </Grid>
+
+      <Grid item xs={8}>
+
+        {this.state.showRosterAdmin &&
+          this.renderRosterAdmin()
+          }
       <Box>
-      game vs {this.state.away} on {readableDate}
+      game {this.state.game_id} vs {this.state.away} on {this.state.date} 
       </Box>
+      </Grid>
+      <Grid item xs={2}>
+        {this.state.showRosterAdmin &&
+          <ExpandLessRoundedIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
+
+          </ExpandLessRoundedIcon>
+        }
+        
+        {!this.state.showRosterAdmin &&
+
+        <ExpandMoreRoundedIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
+
+        </ExpandMoreRoundedIcon>
+  }
+      </Grid>
+      </Grid>
+
+      
+
       <Container>
       <ButtonGroup >
       <Box m={1}>
@@ -445,8 +480,13 @@ class TrackStats extends React.Component {
       </Container>
       <Container>
 
-      <Possession play={this.state.passes}></Possession>
-      {this.renderPlays()}
+      <Possession play={this.state.passes}  onClick={() => this.setState({showAllPossessions:!this.state.showAllPossessions})} ></Possession>
+      {this.state.showAllPossessions &&
+      this.renderPlays()
+      }
+      {!this.state.showAllPossessions &&
+      <p>Hiding All Possessions</p>
+      }
 
       </Container>
 
