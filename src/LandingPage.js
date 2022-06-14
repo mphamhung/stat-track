@@ -21,6 +21,7 @@ function LandingPage(props) {
 
     const [hasFetched, setHasFetched] = useState(false)
 
+    const [adminGames, setAdminGames] = useState([])
     const handleSubmit = (e) => {
         e.preventDefault()
         let query = "?home="+home+"&versus="+away
@@ -29,27 +30,41 @@ function LandingPage(props) {
         .then(data => {
             setUID(data.length+1)
         })
-
     }
+
     function fetchGames() {
         return fetch(db_url+"/games")
         .then(resp => resp.json())
         .then( data => {
-            let gameList = data.map(game => {
+            let gameList = data.filter(game => game.versus !== 'default').map(game => {
                 let query = "?home="+game.team_name+"&versus="+game.versus+"&date="+game.date+"&uID="+game.uID
-
-                return <ListItemButton key={"?home="+game.team_name+"&versus="+game.versus+"&date="+game.date+"&uID="+game.uID}>
+                
+                    return <ListItemButton key={"?home="+game.team_name+"&versus="+game.versus+"&date="+game.date+"&uID="+game.uID}>
                     <Link to={{
                     pathname:"/game/"+query,
                     }}
                     >
                     {game.team_name}  versus {game.versus}  game {game.uID} on {game.date}</Link>
-                </ListItemButton>
-                    
-                    
+                    </ListItemButton>
+
             })
+
+            let adminList  = data.filter(game => game.versus === 'default').map(game => {
+                let query = "?home="+game.team_name+"&versus="+game.versus+"&date="+game.date+"&uID="+game.uID
+                
+                    return <ListItemButton key={"?home="+game.team_name+"&versus="+game.versus+"&date="+game.date+"&uID="+game.uID}>
+                    <Link to={{
+                    pathname:"/game/"+query,
+                    }}
+                    >
+                    {game.team_name}  versus {game.versus}  game {game.uID} on {game.date}</Link>
+                    </ListItemButton>
+            })
+            
             // console.log(gameList)
             setGameList(gameList)
+            setAdminGames(adminList)
+
             setHasFetched(true)
     
         }
@@ -117,6 +132,7 @@ function LandingPage(props) {
             
         <Container>
         <h1> Previous Games: </h1>
+        {away === 'admin'? adminGames : ''}
         {hasFetched && gameList} 
         {!hasFetched && <p>Fetching games list</p>}
         </Container>
