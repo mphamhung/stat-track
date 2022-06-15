@@ -107,13 +107,13 @@ export default function Roster(props) {
         <div>
 
             {hasFetched ? 
+
+            
             <Container>
             <ButtonGroup 
             orientation="vertical" 
             size='large' 
-            variant="contained" 
             style={{
-              border: "solid",
               minWidth: "48%",
             }}>
               {females.map((player) =>
@@ -124,9 +124,7 @@ export default function Roster(props) {
             <ButtonGroup 
             orientation="vertical" 
             size='large' 
-            variant="contained" 
             style={{
-              border: "solid",
               minWidth: "48%",
             }}>
               {males.map((player) =>
