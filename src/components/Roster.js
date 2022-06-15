@@ -1,69 +1,134 @@
 
-import PlayerButton from './PlayerButton'
-import {ButtonGroup} from '@mui/material'
-import { useEffect} from "react"
+import RosterButton from './RosterButton'
+import {ButtonGroup, Container} from '@mui/material'
+import { useEffect,useState} from "react"
+import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid'
+import { ConstructionOutlined } from '@mui/icons-material'
 
+const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 
 export default function Roster(props) {
 
-    let male_players = props.males
-    let female_players = props.females
-    // let onClick = props.onClick
+    let team = props.team
+    let onClick = props.onClick
+    let line = props.line
 
-    let statuses = new Map(
-        male_players.map((player) => {
-           return [player.name,false]
-        }).concat(
-            female_players.map((player) => {
-            return [player.name,false]
-        }))
-    )
-    // function handleClick()
+
+    const [males,setMales] = useState([])
+    const [females,setFemales] = useState([])
+
+    const [playersOn, setPlayersOn] = useState(0)
+    const [hasFetched, setHasFetched] = useState(false)
+    // const handleSubmit = (e) => {
+    const fetch_players = (e) => {
+        fetch(db_url+"/players?gender=M&team_name="+team+"&_sort=name")
+        .then(resp => resp.json())
+        .then (data => {
+          let players = data.map((player) => {
+  
+          let status = false
+            for (let i=0; i< line.length; i++) {
+              if (line[i].name === player.name) {
+                  status = true
+              }
+          }
+            return  {name:player.name, gender:player.gender, id: player.id, status: status}
+          }
+          )
+          setMales(players)
+        })
+        fetch(db_url+"/players?gender=F&_sort=name&team_name="+team)
+        .then(resp => resp.json())
+        .then (data => {
+          let players = data.map((player) => {
+            let status = false
+            for (let i=0; i< line.length; i++) {
+              if (line[i].name === player.name) {
+                  status = true
+              }
+          }
+
+            return {name:player.name, gender:player.gender, id: player.id, status: status}
+          }
+          )
+          setFemales(players)
+        })
+      }
+      
+    const handlePlayerClick = (props) => {
+        console.log(props)
+
+        if (props.gender === "M") {
+            let temp = males.slice()
+            for (let i=0; i< temp.length; i++) {
+                if (temp[i].name === props.name) {
+                    temp[i].status = !temp[i].status
+                }
+            }
+            setMales(temp)
+        }
+        else if (props.gender === "F") {
+            let temp = females.slice()
+            for (let i=0; i< temp.length; i++) {
+                if (temp[i].name === props.name) {
+                    temp[i].status = !temp[i].status
+                }
+            }
+            setFemales(temp)
+        }
+        // line.push(props.name)
+        onClick(males, females)
+    }
     useEffect( () => {
-        
+        fetch_players()
     }, [])
 
+    useEffect( () => {
+        if (males.length>0 && females.length>0) {
+            setHasFetched(true)
 
-    const handleClick = (props) => {
-        // statuses.get(props.name)
-        console.log(props)
-        // statuses.set(props.name, !statuses.get(props.name))
-       
-        console.log(statuses)
+        }
 
-    }
+    }, [males, females])
 
-
-    const femaleMembers = (props.females) ? <ButtonGroup 
-    orientation="vertical" 
-    size='large' 
-    variant="contained" 
-    style={{
-        border: "solid",
-        minWidth: "48%",
-    }}>
-        { female_players.map((player) =>
-    <PlayerButton player ={player} onClick={handleClick}></PlayerButton>
-    )}
-    </ButtonGroup> : []
-
-    const maleMembers =   (props.males) ? <ButtonGroup 
-    orientation="vertical" 
-    size='large' 
-    variant="contained" 
-    style={{
-        border: "solid",
-        minWidth: "48%",
-    }}>
-        { male_players.map((player) =>
-    <PlayerButton player ={player} onClick={handleClick}></PlayerButton>
-    )}
-    </ButtonGroup> : []
 
     return (
         <div>
-            {femaleMembers}
-            {maleMembers}
+
+            {hasFetched ? 
+            <Container>
+            <ButtonGroup 
+            orientation="vertical" 
+            size='large' 
+            variant="contained" 
+            style={{
+              border: "solid",
+              minWidth: "48%",
+            }}>
+              {females.map((player) =>
+            <RosterButton player ={player}  onClick={handlePlayerClick}></RosterButton>
+            )}
+            {females.map((player)=> player.status ? 1:0).reduce((r,i) => r+i)} females on
+            </ButtonGroup>
+            <ButtonGroup 
+            orientation="vertical" 
+            size='large' 
+            variant="contained" 
+            style={{
+              border: "solid",
+              minWidth: "48%",
+            }}>
+              {males.map((player) =>
+            <RosterButton player ={player}  onClick={handlePlayerClick}></RosterButton>
+            )}
+            {males.map((player)=> player.status ? 1:0).reduce((r,i) => r+i)} males on
+
+            </ButtonGroup>
+
+            </Container>         
+            :   ''} 
+            
+
         </div>
 
 

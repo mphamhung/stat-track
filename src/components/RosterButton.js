@@ -6,18 +6,18 @@ import React from 'react'
 
 const padding = 0.2
 
-function PlayerButton(props) {
+function RosterButton(props) {
     let name = props.player.name
     let func = props.onClick
     let id = props.player.id
     let status = props.player.status
-    let color = ((props.player.gender === "M" ) ? 'primary' : 'secondary')
+    let color = ((status) ? 'success' : 'warning')
     let gender = props.player.gender
     return (
       <Box m={padding}>
-          <Button onClick={() => func({name, id, gender})} variant="contained" fullWidth color={color} name={id} key={id}>{name}</Button>
+          <Button onClick={() => func({name, id, gender})} variant="contained" fullWidth color={color} name={id} key={id} >{name}</Button>
       </Box>
     )
   }
 
-export default PlayerButton;
+export default RosterButton;

@@ -1,11 +1,13 @@
 import './App.css';
 import {Button, ButtonGroup, Container, Box,Grid} from '@mui/material';
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react"
 
 import Possession from './components/Possession'
 import PlayerButton from './components/PlayerButton';
 import ScoreBoard from './components/ScoreBoard'
 import GameSummary from './components/GameSummary'
+import Roster from './components/Roster'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
@@ -43,10 +45,12 @@ function App(prop) {
   let away = searchParams.get('versus')
   let uID = searchParams.get('uID')
   let date = searchParams.get('date')
-
   
   return(
+    <div>
     <TrackStats home={home} versus={away} date={date} uID={uID}></TrackStats>
+    </div>
+
   )
 }
 
@@ -58,6 +62,7 @@ class TrackStats extends React.Component {
       date: (props.date)? props.date : 'January-01-2022',
       away: (props.versus)? props.versus : "default_away_name",
       game_id: (props.uID)? props.uID : 0,
+      line: [],
       db_id: 0,
       passes : [],
       play: [],
@@ -72,6 +77,7 @@ class TrackStats extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePlayerClick = this.handlePlayerClick.bind(this);
+    this.onRosterClick =this.onRosterClick.bind(this);
 
 
   }
@@ -370,29 +376,50 @@ class TrackStats extends React.Component {
     
     
   }
-
+  onRosterClick(male, female) {
+    // console.log(male, female)
+    let line = male.filter(player => player.status)
+    .concat(
+      female.filter(player => player.status)
+    ).map((player) => {
+      player.status=true
+      return player
+    })
+    console.log(line)
+    this.setState({
+      line:line
+    })
+  }
 
   render() {
 
-    const femaleMembers = this.state.females.map((player) =>
-    <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>
-    )
+    const m_line = this.state.line.filter((player)=> player.gender ==="M").map((player) => <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>)
+    const f_line = this.state.line.filter((player)=> player.gender ==="F").map((player) => <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>)
 
-    const maleMembers = this.state.males.map((player) =>
-    <PlayerButton player ={player}  onClick={this.handlePlayerClick}></PlayerButton>
-    )
+    // const femaleMembers = this.state.females.map((player) =>
+    // <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>
+    // )
+
+    // const maleMembers = this.state.males.map((player) =>
+    // <PlayerButton player ={player}  onClick={this.handlePlayerClick}></PlayerButton>
+    // )
     
     const buttonActions = actions.map((action) =>
     <Box m={1}>
       <Button onClick={() => this.handleAction({action})} fullWidth id={action} key={action}>{action}</Button>
     </Box>
-    )
-    
+    )   
   
     
   return (
     <div className="App">
+      {this.state.showRosterAdmin &&
+
+      <Roster onClick={this.onRosterClick} team={this.state.team} line={this.state.line}></Roster>
+
+      }
       <Grid container spacing ={2}>
+     
       <Grid item xs={2}>
         
         <Link to={{
@@ -403,10 +430,14 @@ class TrackStats extends React.Component {
           
       </Grid>
 
+
       <Grid item xs={8}>
 
         {this.state.showRosterAdmin &&
-          this.renderRosterAdmin()
+        <div>
+          {this.renderRosterAdmin()}
+        </div>
+
           }
       <Box>
       game {this.state.game_id} vs {this.state.away} on {this.state.date} 
@@ -422,7 +453,6 @@ class TrackStats extends React.Component {
         {!this.state.showRosterAdmin &&
 
         <ExpandMoreRoundedIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
-
         </ExpandMoreRoundedIcon>
   }
       </Grid>
@@ -468,7 +498,7 @@ class TrackStats extends React.Component {
         border: "solid",
         minWidth: "48%",
       }}>
-        {femaleMembers}
+        {f_line}
       </ButtonGroup>
       <ButtonGroup 
       orientation="vertical" 
@@ -478,7 +508,7 @@ class TrackStats extends React.Component {
         border: "solid",
         minWidth: "48%",
       }}>
-        {maleMembers}
+        {m_line}
       </ButtonGroup>
       </Container>
       <Container>
