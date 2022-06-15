@@ -393,9 +393,9 @@ class TrackStats extends React.Component {
 
   render() {
 
+
     const m_line = this.state.line.filter((player)=> player.gender ==="M").map((player) => <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>)
     const f_line = this.state.line.filter((player)=> player.gender ==="F").map((player) => <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>)
-
     // const femaleMembers = this.state.females.map((player) =>
     // <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>
     // )
@@ -417,7 +417,17 @@ class TrackStats extends React.Component {
 
       <Roster onClick={this.onRosterClick} team={this.state.team} line={this.state.line}></Roster>
 
+
+      } 
+      {
+        (m_line.length+f_line.length) ?  '' : <div> <h2> <Button variant='contained' onClick={() => this.setState({showRosterAdmin:true})}>Select who's on the line!</Button> </h2></div> 
       }
+        {this.state.showRosterAdmin &&
+        <div>
+          {this.renderRosterAdmin()}
+        </div>
+
+          }
       <Grid container spacing ={2}>
      
       <Grid item xs={2}>
@@ -433,12 +443,7 @@ class TrackStats extends React.Component {
 
       <Grid item xs={8}>
 
-        {this.state.showRosterAdmin &&
-        <div>
-          {this.renderRosterAdmin()}
-        </div>
 
-          }
       <Box>
       game {this.state.game_id} vs {this.state.away} on {this.state.date} 
       </Box>

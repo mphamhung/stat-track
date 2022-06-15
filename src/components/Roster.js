@@ -1,6 +1,6 @@
 
 import RosterButton from './RosterButton'
-import {ButtonGroup, Container} from '@mui/material'
+import {ButtonGroup, Container, Button} from '@mui/material'
 import { useEffect,useState} from "react"
 import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid'
 import { ConstructionOutlined } from '@mui/icons-material'
@@ -54,6 +54,21 @@ export default function Roster(props) {
           setFemales(players)
         })
       }
+
+    const onClearClick = (props) => {
+
+      let temp = males.slice()
+      for (let i=0; i< temp.length; i++) {
+              temp[i].status = false
+      }
+      setMales(temp)
+      temp = females.slice()
+      for (let i=0; i< temp.length; i++) {
+              temp[i].status = false
+      }
+      setFemales(temp)
+      onClick(males, females)
+    }
       
     const handlePlayerClick = (props) => {
         console.log(props)
@@ -124,7 +139,7 @@ export default function Roster(props) {
             {males.map((player)=> player.status ? 1:0).reduce((r,i) => r+i)} males on
 
             </ButtonGroup>
-
+            <Button variant='contained' onClick={() => onClearClick()}> Clear</Button>
             </Container>         
             :   ''} 
             
