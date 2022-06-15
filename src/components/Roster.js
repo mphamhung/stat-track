@@ -2,8 +2,7 @@
 import RosterButton from './RosterButton'
 import {ButtonGroup, Container, Button} from '@mui/material'
 import { useEffect,useState} from "react"
-import { gridColumnsTotalWidthSelector } from '@mui/x-data-grid'
-import { ConstructionOutlined } from '@mui/icons-material'
+
 
 const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 
@@ -17,43 +16,8 @@ export default function Roster(props) {
     const [males,setMales] = useState([])
     const [females,setFemales] = useState([])
 
-    const [playersOn, setPlayersOn] = useState(0)
     const [hasFetched, setHasFetched] = useState(false)
     // const handleSubmit = (e) => {
-    const fetch_players = (e) => {
-        fetch(db_url+"/players?gender=M&team_name="+team+"&_sort=name")
-        .then(resp => resp.json())
-        .then (data => {
-          let players = data.map((player) => {
-  
-          let status = false
-            for (let i=0; i< line.length; i++) {
-              if (line[i].name === player.name) {
-                  status = true
-              }
-          }
-            return  {name:player.name, gender:player.gender, id: player.id, status: status}
-          }
-          )
-          setMales(players)
-        })
-        fetch(db_url+"/players?gender=F&_sort=name&team_name="+team)
-        .then(resp => resp.json())
-        .then (data => {
-          let players = data.map((player) => {
-            let status = false
-            for (let i=0; i< line.length; i++) {
-              if (line[i].name === player.name) {
-                  status = true
-              }
-          }
-
-            return {name:player.name, gender:player.gender, id: player.id, status: status}
-          }
-          )
-          setFemales(players)
-        })
-      }
 
     const onClearClick = (props) => {
 
@@ -95,8 +59,40 @@ export default function Roster(props) {
         onClick(males, females)
     }
     useEffect( () => {
-        fetch_players()
-    }, [])
+      fetch(db_url+"/players?gender=M&team_name="+team+"&_sort=name")
+      .then(resp => resp.json())
+      .then (data => {
+        let players = data.map((player) => {
+
+        let status = false
+          for (let i=0; i< line.length; i++) {
+            if (line[i].name === player.name) {
+                status = true
+            }
+        }
+          return  {name:player.name, gender:player.gender, id: player.id, status: status}
+        }
+        )
+        setMales(players)
+      })
+      fetch(db_url+"/players?gender=F&_sort=name&team_name="+team)
+      .then(resp => resp.json())
+      .then (data => {
+        let players = data.map((player) => {
+          let status = false
+          for (let i=0; i< line.length; i++) {
+            if (line[i].name === player.name) {
+                status = true
+            }
+        }
+
+          return {name:player.name, gender:player.gender, id: player.id, status: status}
+        }
+        )
+        setFemales(players)
+      })
+    }, [line, team])
+
 
     useEffect( () => {
         if (males.length>0 && females.length>0) {

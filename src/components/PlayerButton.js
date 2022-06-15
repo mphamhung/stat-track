@@ -10,7 +10,7 @@ function PlayerButton(props) {
     let name = props.player.name
     let func = props.onClick
     let id = props.player.id
-    let status = props.player.status
+    // let status = props.player.status
     let color = ((props.player.gender === "M" ) ? 'primary' : 'secondary')
     let gender = props.player.gender
     return (

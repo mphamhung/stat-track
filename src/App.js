@@ -1,7 +1,6 @@
 import './App.css';
 import {Button, ButtonGroup, Container, Box,Grid} from '@mui/material';
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react"
 
 import Possession from './components/Possession'
 import PlayerButton from './components/PlayerButton';
