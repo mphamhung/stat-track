@@ -19,9 +19,10 @@ function createData(
     tas: number,
     drops: number,
     taPerc: number,
-    assists2: number
+    assists2: number,
+    value: number
   ) {
-    return { name, touches, goals, assists, ds, tas, drops, taPerc, assists2 };
+    return { name, touches, goals, assists, ds, tas, drops, taPerc, assists2, value };
   }
   
 
@@ -127,7 +128,20 @@ function ScoreBoard(props) {
     })
  
     const rows = []
+
+    const goalWeight = 1;
+    const assistWeight = 1;
+    const assist2Weight = 1;
+    const DWeight = 1;
+    const DropWeight = -1;
+    const TAWeight = -1;
     for (const [name,value] of touches.entries()) {
+        let salary = goalWeight*goals.get(name) + 
+                assistWeight* assists.get(name) +
+                assist2Weight* assists2.get(name) +
+                DWeight* Ds.get(name) +
+                DropWeight* Drops.get(name) +
+                TAWeight* TAs.get(name) ;
         rows.push(createData(name, 
                     value - goals.get(name) - Ds.get(name) - Drops.get(name),
                     goals.get(name),
@@ -137,10 +151,24 @@ function ScoreBoard(props) {
                     Drops.get(name),
                     (TAs.get(name)/value).toFixed(2),
                     assists2.get(name),
+                    salary/value
         ))
     }
 
-    rows.sort((a,b) => ascending? b[sortKey] - a[sortKey]:  a[sortKey] - b[sortKey] )
+
+    rows.sort((a,b) => 
+          {
+            if (isNaN(a[sortKey])) {
+              return 1
+            }
+            else if (isNaN(b[sortKey])) {
+              return -1
+            }
+            else{
+              return ascending? b[sortKey] - a[sortKey]:  a[sortKey] - b[sortKey] 
+
+            }
+          })
 
     
     return (
@@ -157,6 +185,7 @@ function ScoreBoard(props) {
                 <TableCell align="right" onClick={() => handleSort('drops')}>Drops</TableCell>
                 <TableCell align="right" onClick={() => handleSort('touches')}>Passes</TableCell>
                 <TableCell align="right" onClick={() => handleSort('taPerc')}>TA %</TableCell>
+                <TableCell align="right" onClick={() => handleSort('value')}>$</TableCell>
 
               </TableRow>
             </TableHead>
@@ -177,6 +206,7 @@ function ScoreBoard(props) {
                   <TableCell align="right">{row.drops}</TableCell>
                   <TableCell align="right">{row.touches}</TableCell>
                   <TableCell align="right">{row.taPerc}</TableCell>
+                  <TableCell align="right">{row.value}</TableCell>
 
                 </TableRow>
               ))}
