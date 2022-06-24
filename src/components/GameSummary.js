@@ -20,9 +20,10 @@ function createData(
     drops: number,
     taPerc: number,
     assists2: number,
-    value: number
+    value: number,
+    favTarget: string
   ) {
-    return { name, touches, goals, assists, ds, tas, drops, taPerc, assists2, value };
+    return { name, touches, goals, assists, ds, tas, drops, taPerc, assists2, value, favTarget };
   }
   
 
@@ -92,6 +93,28 @@ function ScoreBoard(props) {
         }))
     )
 
+    const passedTo = new Map(
+      props.m_players.map((player) => {
+         return [player.name, new Map(
+          props.m_players.map((player) => {
+             return [player.name,0]
+          }).concat(
+          props.f_players.map((player) => {
+              return [player.name,0]
+          }))
+      )]
+      }).concat(
+      props.f_players.map((player) => {
+          return [player.name, new Map(
+            props.m_players.map((player) => {
+               return [player.name,0]
+            }).concat(
+            props.f_players.map((player) => {
+                return [player.name,0]
+            }))
+        )]
+      }))
+  )
     const Drops = new Map(
         props.m_players.map((player) => {
           return [player.name,0]
@@ -123,10 +146,40 @@ function ScoreBoard(props) {
       else if (e[e.length-1] === "Drop") {
           Drops.set(e[e.length-2], Drops.get(e[e.length-2])+1)
       }  
+
+      for (let i=0; i<e.length; i++) {
+        if (passedTo.has(e[i])){
+          let tempDict = passedTo.get(e[i])
+          if (tempDict.has(e[i+1])) {
+          tempDict.set(e[i+1], tempDict.get(e[i+1])+1)
+          }
+        }
+      }
       return 0;
 
     })
- 
+
+    const favTarget = new Map(
+      props.m_players.map((player) => {
+        return [player.name,'']
+      }).concat(
+      props.f_players.map((player) => {
+          return [player.name,'']
+      }))
+  )
+    var passes = []
+    for (const [name, map] of passedTo.entries()) {
+      passes = []
+      for (const [name, value] of map.entries()) {
+        passes.push([name, value])
+      }
+      
+      passes.sort((a,b) =>  b[1] -a[1])
+      if (passes[0][1] !== 0 && passes[0][1] !== passes[1][1]) {
+        console.log(passes[0])
+        favTarget.set(name, passes[0])
+      }      
+    }
     const rows = []
 
     const goalWeight = 5000;
@@ -154,7 +207,9 @@ function ScoreBoard(props) {
                     Drops.get(name),
                     (TAs.get(name)/value).toFixed(2),
                     assists2.get(name),
-                    salary
+                    salary,
+                    favTarget.get(name)
+                    
         ))
     }
 
@@ -188,7 +243,8 @@ function ScoreBoard(props) {
                 <TableCell align="right" onClick={() => handleSort('drops')}>Drops</TableCell>
                 <TableCell align="right" onClick={() => handleSort('touches')}>Passes</TableCell>
                 <TableCell align="right" onClick={() => handleSort('taPerc')}>TA %</TableCell>
-                <TableCell align="right" onClick={() => handleSort('value')}>$</TableCell>
+                <TableCell align="right" onClick={() => handleSort('value')}>Net $</TableCell>
+                <TableCell align="right"> Fave Target</TableCell>
 
               </TableRow>
             </TableHead>
@@ -210,6 +266,7 @@ function ScoreBoard(props) {
                   <TableCell align="right">{row.touches}</TableCell>
                   <TableCell align="right">{row.taPerc}</TableCell>
                   <TableCell align="right">{row.value}</TableCell>
+                  <TableCell align="right">{row.favTarget}</TableCell>
 
                 </TableRow>
               ))}
