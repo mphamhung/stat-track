@@ -8,6 +8,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Tooltip from '@mui/material/Tooltip';
 import React, { useState } from 'react'
 
 function createData(
@@ -194,7 +195,7 @@ function ScoreBoard(props) {
     const DWeight = 5000;
     const DropWeight = -5000;
     const TAWeight = -5000;
-    const passWeight = 500;
+    const passWeight = 300;
 
     for (const [name,value] of touches.entries()) {
         let salary = goalWeight*goals.get(name) + 
@@ -211,7 +212,7 @@ function ScoreBoard(props) {
                     Ds.get(name),
                     TAs.get(name),
                     Drops.get(name),
-                    (TAs.get(name)/value).toFixed(2),
+                    (1-(TAs.get(name)/value)).toFixed(2),
                     assists2.get(name),
                     salary,
                     favTarget.get(name)
@@ -247,10 +248,20 @@ function ScoreBoard(props) {
                 <TableCell align="right" onClick={() => handleSort('ds')}>Ds</TableCell>
                 <TableCell align="right" onClick={() => handleSort('tas')}>Tas</TableCell>
                 <TableCell align="right" onClick={() => handleSort('drops')}>Drops</TableCell>
-                <TableCell align="right" onClick={() => handleSort('touches')}>Passes</TableCell>
-                <TableCell align="right" onClick={() => handleSort('taPerc')}>TA %</TableCell>
-                <TableCell align="right" onClick={() => handleSort('value')}>Net $</TableCell>
-                <TableCell align="right"> Fave Target</TableCell>
+                <TableCell align="right" onClick={() => handleSort('touches')}>Throws</TableCell>
+                <TableCell align="right" onClick={() => handleSort('taPerc')}>Pass %</TableCell>
+                <Tooltip title={"Computed by: " + 
+                goalWeight +"*Gs +"+
+                assistWeight+"*As +" +
+                assist2Weight+"*2As +"+ 
+                DWeight+"*Ds +" +
+                DropWeight +"*Drops +"+ 
+                TAWeight+"*Tas +"+
+                passWeight+"*passes"}
+><TableCell align="right" onClick={() => handleSort('value')}>  
+                    Net $
+                </TableCell></Tooltip>
+                <TableCell align="right"> Fave Target(s)</TableCell>
 
               </TableRow>
             </TableHead>
