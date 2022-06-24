@@ -129,19 +129,22 @@ function ScoreBoard(props) {
  
     const rows = []
 
-    const goalWeight = 1;
-    const assistWeight = 1;
-    const assist2Weight = 1;
-    const DWeight = 1;
-    const DropWeight = -1;
-    const TAWeight = -1;
+    const goalWeight = 5000;
+    const assistWeight = 5000;
+    const assist2Weight = 3000;
+    const DWeight = 5000;
+    const DropWeight = -5000;
+    const TAWeight = -5000;
+    const passWeight = 500;
+
     for (const [name,value] of touches.entries()) {
         let salary = goalWeight*goals.get(name) + 
                 assistWeight* assists.get(name) +
                 assist2Weight* assists2.get(name) +
                 DWeight* Ds.get(name) +
                 DropWeight* Drops.get(name) +
-                TAWeight* TAs.get(name) ;
+                TAWeight* TAs.get(name) +
+                passWeight* (value - goals.get(name) - Ds.get(name) - Drops.get(name));
         rows.push(createData(name, 
                     value - goals.get(name) - Ds.get(name) - Drops.get(name),
                     goals.get(name),
@@ -151,7 +154,7 @@ function ScoreBoard(props) {
                     Drops.get(name),
                     (TAs.get(name)/value).toFixed(2),
                     assists2.get(name),
-                    salary/value
+                    salary
         ))
     }
 
