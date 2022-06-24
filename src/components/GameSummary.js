@@ -166,7 +166,10 @@ function ScoreBoard(props) {
       props.f_players.map((player) => {
           return [player.name,'']
       }))
-  )
+    )
+
+    const filterOut = (array, target) => array.filter(element => element[1] === target);
+    
     var passes = []
     for (const [name, map] of passedTo.entries()) {
       passes = []
@@ -176,9 +179,12 @@ function ScoreBoard(props) {
       
       passes.sort((a,b) =>  b[1] -a[1])
       if (passes[0][1] !== 0 && passes[0][1] !== passes[1][1]) {
-        console.log(passes[0])
-        favTarget.set(name, passes[0])
+        favTarget.set(name, passes[0][0] + ' ' + passes[0][1])
       }      
+      else if (passes[0][1] !== 0) {     
+        favTarget.set(name, filterOut(passes, passes[0][1]) 
+        .map((e) => e[0]).join('|') + ' '+ passes[0][1])
+      }
     }
     const rows = []
 
