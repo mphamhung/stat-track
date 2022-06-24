@@ -17,9 +17,11 @@ function createData(
     assists: number,
     ds: number,
     tas: number,
-    drops: number
+    drops: number,
+    taPerc: number,
+    assists2: number
   ) {
-    return { name, touches, goals, assists, ds, tas, drops };
+    return { name, touches, goals, assists, ds, tas, drops, taPerc, assists2 };
   }
   
 
@@ -52,6 +54,15 @@ function ScoreBoard(props) {
             return [player.name,0]
         }))
     )
+    const assists2 = new Map(
+      props.m_players.map((player) => {
+         return [player.name,0]
+      }).concat(
+      props.f_players.map((player) => {
+          return [player.name,0]
+      }))
+  )
+
     const Ds = new Map(
         props.m_players.map((player) => {
            return [player.name,0]
@@ -89,6 +100,7 @@ function ScoreBoard(props) {
       if (e[e.length-1] === "G") {
         goals.set(e[e.length-2], goals.get(e[e.length-2])+1)
         assists.set(e[e.length-3], assists.get(e[e.length-3])+1)
+        assists2.set(e[e.length-4], assists2.get(e[e.length-4])+1)
       }
       else if (e[e.length-1] === "D") {
           Ds.set(e[e.length-2], Ds.get(e[e.length-2])+1)
@@ -106,12 +118,14 @@ function ScoreBoard(props) {
     const rows = []
     for (const [name,value] of touches.entries()) {
         rows.push(createData(name, 
-                    value,
+                    value - goals.get(name) - Ds.get(name) - Drops.get(name),
                     goals.get(name),
                     assists.get(name),
                     Ds.get(name),
                     TAs.get(name),
-                    Drops.get(name)
+                    Drops.get(name),
+                    (TAs.get(name)/value).toFixed(2),
+                    assists2.get(name),
         ))
     }
 
@@ -126,10 +140,12 @@ function ScoreBoard(props) {
                 <TableCell onClick={() => setSortKey('name')}>Name</TableCell>
                 <TableCell align="right" onClick={() => setSortKey('goals')}>Gs</TableCell>
                 <TableCell align="right" onClick={() => setSortKey('assists')}>As</TableCell>
+                <TableCell align="right" onClick={() => setSortKey('assists2')}>2As</TableCell>
                 <TableCell align="right" onClick={() => setSortKey('ds')}>Ds</TableCell>
                 <TableCell align="right" onClick={() => setSortKey('tas')}>Tas</TableCell>
                 <TableCell align="right" onClick={() => setSortKey('drops')}>Drops</TableCell>
-                <TableCell align="right" onClick={() => setSortKey('touches')}>Touches</TableCell>
+                <TableCell align="right" onClick={() => setSortKey('touches')}>Passes</TableCell>
+                <TableCell align="right" onClick={() => setSortKey('taPerc')}>TA %</TableCell>
 
               </TableRow>
             </TableHead>
@@ -144,10 +160,12 @@ function ScoreBoard(props) {
                   </TableCell>
                   <TableCell align="right">{row.goals}</TableCell>
                   <TableCell align="right">{row.assists}</TableCell>
+                  <TableCell align="right">{row.assists2}</TableCell>
                   <TableCell align="right">{row.ds}</TableCell>
                   <TableCell align="right">{row.tas}</TableCell>
                   <TableCell align="right">{row.drops}</TableCell>
                   <TableCell align="right">{row.touches}</TableCell>
+                  <TableCell align="right">{row.taPerc}</TableCell>
 
                 </TableRow>
               ))}
