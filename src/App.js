@@ -70,8 +70,8 @@ class TrackStats extends React.Component {
       females: [],
       inputName: "",
       inputGender: "M",
-      showRosterAdmin: true, 
-      showAllPossessions: true,
+      showRosterAdmin: false, 
+      showAllPossessions: false,
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
