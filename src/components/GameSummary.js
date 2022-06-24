@@ -28,7 +28,18 @@ function createData(
 function ScoreBoard(props) {
     // const initialStae = () => [];
     const [sortKey, setSortKey] = useState("Name")    
+    const [ascending, setAscending] = useState(true)   
 
+    const handleSort=(prop)=>
+    {
+      if (prop === sortKey){
+        setAscending(!ascending)
+      }
+      else{
+        setSortKey(prop)
+        setAscending(true)
+      }
+    }
 
     const touches = new Map(
         props.m_players.map((player) => {
@@ -129,7 +140,7 @@ function ScoreBoard(props) {
         ))
     }
 
-    rows.sort((a,b) => b[sortKey] - a[sortKey] )
+    rows.sort((a,b) => ascending? b[sortKey] - a[sortKey]:  a[sortKey] - b[sortKey] )
 
     
     return (
@@ -137,15 +148,15 @@ function ScoreBoard(props) {
           <Table  sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <TableCell onClick={() => setSortKey('name')}>Name</TableCell>
-                <TableCell align="right" onClick={() => setSortKey('goals')}>Gs</TableCell>
-                <TableCell align="right" onClick={() => setSortKey('assists')}>As</TableCell>
-                <TableCell align="right" onClick={() => setSortKey('assists2')}>2As</TableCell>
-                <TableCell align="right" onClick={() => setSortKey('ds')}>Ds</TableCell>
-                <TableCell align="right" onClick={() => setSortKey('tas')}>Tas</TableCell>
-                <TableCell align="right" onClick={() => setSortKey('drops')}>Drops</TableCell>
-                <TableCell align="right" onClick={() => setSortKey('touches')}>Passes</TableCell>
-                <TableCell align="right" onClick={() => setSortKey('taPerc')}>TA %</TableCell>
+                <TableCell onClick={() => handleSort('name')}>Name</TableCell>
+                <TableCell align="right" onClick={() => handleSort('goals')}>Gs</TableCell>
+                <TableCell align="right" onClick={() => handleSort('assists')}>As</TableCell>
+                <TableCell align="right" onClick={() => handleSort('assists2')}>2As</TableCell>
+                <TableCell align="right" onClick={() => handleSort('ds')}>Ds</TableCell>
+                <TableCell align="right" onClick={() => handleSort('tas')}>Tas</TableCell>
+                <TableCell align="right" onClick={() => handleSort('drops')}>Drops</TableCell>
+                <TableCell align="right" onClick={() => handleSort('touches')}>Passes</TableCell>
+                <TableCell align="right" onClick={() => handleSort('taPerc')}>TA %</TableCell>
 
               </TableRow>
             </TableHead>
