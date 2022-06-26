@@ -1,5 +1,5 @@
 import './App.css';
-import {Button, ButtonGroup, Container, Box,Grid} from '@mui/material';
+import {Button, ButtonGroup, Container, Box,Grid,Dialog, Accordion, AccordionSummary, AccordionDetails,Typography} from '@mui/material';
 import { Link } from "react-router-dom";
 
 import Possession from './components/Possession'
@@ -10,6 +10,7 @@ import Roster from './components/Roster'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
+
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
@@ -77,6 +78,7 @@ class TrackStats extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePlayerClick = this.handlePlayerClick.bind(this);
     this.onRosterClick =this.onRosterClick.bind(this);
+    this.onSaveClick = this.onSaveClick.bind(this);
 
 
   }
@@ -375,6 +377,11 @@ class TrackStats extends React.Component {
     
     
   }
+
+  onSaveClick(props) {
+    // console.log(this.state.showRosterAdmin)
+    this.setState({showRosterAdmin:false})
+  }
   onRosterClick(male, female) {
     // console.log(male, female)
     let line = male.filter(player => player.status)
@@ -395,13 +402,6 @@ class TrackStats extends React.Component {
 
     const m_line = this.state.line.filter((player)=> player.gender ==="M").map((player) => <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>)
     const f_line = this.state.line.filter((player)=> player.gender ==="F").map((player) => <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>)
-    // const femaleMembers = this.state.females.map((player) =>
-    // <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>
-    // )
-
-    // const maleMembers = this.state.males.map((player) =>
-    // <PlayerButton player ={player}  onClick={this.handlePlayerClick}></PlayerButton>
-    // )
     
     const buttonActions = actions.map((action) =>
     <Box m={1}>
@@ -412,21 +412,13 @@ class TrackStats extends React.Component {
     
   return (
     <div className="App">
-      {this.state.showRosterAdmin &&
 
-      <Roster onClick={this.onRosterClick} team={this.state.team} line={this.state.line}></Roster>
-
-
-      } 
-      {
-        (m_line.length+f_line.length) ?  '' : <div> <h2> <Button variant='contained' onClick={() => this.setState({showRosterAdmin:true})}>Select who's on the line!</Button> </h2></div> 
-      }
-        {this.state.showRosterAdmin &&
-        <div>
-          {this.renderRosterAdmin()}
-        </div>
-
-          }
+      <Dialog open={this.state.showRosterAdmin}>
+      <Roster onClick={this.onRosterClick} onSaveClick={this.onSaveClick} team={this.state.team} line={this.state.line}></Roster>
+      {this.renderRosterAdmin()}
+      </Dialog>
+      
+      
       <Grid container spacing ={2}>
      
       <Grid item xs={2}>
@@ -494,36 +486,54 @@ class TrackStats extends React.Component {
       </Container>
 
       <Container>
-      <ButtonGroup 
-      orientation="vertical" 
-      size='large' 
-      variant="contained" 
-      style={{
-        border: "solid",
-        minWidth: "48%",
-      }}>
-        {f_line}
-      </ButtonGroup>
-      <ButtonGroup 
-      orientation="vertical" 
-      size='large' 
-      variant="contained" 
-      style={{
-        border: "solid",
-        minWidth: "48%",
-      }}>
-        {m_line}
-      </ButtonGroup>
+      {
+        (m_line.length+f_line.length) ?  <div><ButtonGroup 
+        orientation="vertical" 
+        size='large' 
+        variant="contained" 
+        style={{
+          border: "solid",
+          minWidth: "48%",
+        }}>
+          {f_line}
+        </ButtonGroup>
+        <ButtonGroup 
+        orientation="vertical" 
+        size='large' 
+        variant="contained" 
+        style={{
+          border: "solid",
+          minWidth: "48%",
+        }}>
+          {m_line}
+        </ButtonGroup></div> : <div> <h2> <Button variant='contained' onClick={() => this.setState({showRosterAdmin:true})}>Select who's on the line!</Button> </h2></div> 
+      }
+      
       </Container>
       <Container>
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreRoundedIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography><Container>{this.state.passes.join('=>')}</Container></Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {this.state.play.reverse().map((e) => {
+            return <Possession play={e}/>
+          })}
+          
+        </AccordionDetails>
+      </Accordion>
 
-      <Possession play={this.state.passes}  onClick={() => this.setState({showAllPossessions:!this.state.showAllPossessions})} ></Possession>
+      {/* <Possession play={this.state.passes}  onClick={() => this.setState({showAllPossessions:!this.state.showAllPossessions})} ></Possession>
       {this.state.showAllPossessions &&
       this.renderPlays()
       }
       {!this.state.showAllPossessions &&
       <p>Hiding All Possessions</p>
-      }
+      } */}
 
       </Container>
 

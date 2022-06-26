@@ -10,6 +10,7 @@ export default function Roster(props) {
 
     let team = props.team
     let onClick = props.onClick
+    let onSaveClick = props.onSaveClick
     let line = props.line
 
 
@@ -34,6 +35,9 @@ export default function Roster(props) {
       onClick(males, females)
     }
       
+    const onSaveClick_ = (props) => {
+      onSaveClick(props)
+    }
     const handlePlayerClick = (props) => {
         console.log(props)
 
@@ -107,8 +111,6 @@ export default function Roster(props) {
         <div>
 
             {hasFetched ? 
-
-            
             <Container>
             <ButtonGroup 
             orientation="vertical" 
@@ -119,7 +121,7 @@ export default function Roster(props) {
               {females.map((player) =>
             <RosterButton player ={player}  onClick={handlePlayerClick}></RosterButton>
             )}
-            {females.map((player)=> player.status ? 1:0).reduce((r,i) => r+i)} females on
+            {/* {females.map((player)=> player.status ? 1:0).reduce((r,i) => r+i)} females on */}
             </ButtonGroup>
             <ButtonGroup 
             orientation="vertical" 
@@ -130,10 +132,12 @@ export default function Roster(props) {
               {males.map((player) =>
             <RosterButton player ={player}  onClick={handlePlayerClick}></RosterButton>
             )}
-            {males.map((player)=> player.status ? 1:0).reduce((r,i) => r+i)} males on
+            {/* {males.map((player)=> player.status ? 1:0).reduce((r,i) => r+i)} males on */}
 
             </ButtonGroup>
             <Button variant='contained' onClick={() => onClearClick()}> Clear</Button>
+            <Button variant='contained' onClick={() => onSaveClick_()}> Save</Button>
+
             </Container>         
             :   ''} 
             
