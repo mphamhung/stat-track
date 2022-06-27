@@ -135,9 +135,10 @@ export default function Roster(props) {
             {/* {males.map((player)=> player.status ? 1:0).reduce((r,i) => r+i)} males on */}
 
             </ButtonGroup>
-            <Button variant='contained' onClick={() => onClearClick()}> Clear</Button>
+            <Button color='secondary' onClick={() => onClearClick()}> Clear</Button>
             <Button variant='contained' onClick={() => onSaveClick_()}> Save</Button>
-
+            
+     
             </Container>         
             :   ''} 
             
