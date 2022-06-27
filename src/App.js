@@ -9,7 +9,7 @@ import GameSummary from './components/GameSummary'
 import Roster from './components/Roster'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
@@ -171,6 +171,7 @@ class TrackStats extends React.Component {
   renderRosterAdmin() {
     return (
       <div>
+        <Container>
         <form
         onSubmit={this.handleSubmit}>
           <input
@@ -191,6 +192,8 @@ class TrackStats extends React.Component {
           <button variant='contained' name='pop'>Populate</button>
           <button variant='contained' name='del_plays'>Del Plays</button>
         </form>
+        </Container>
+
       </div>
       )
   }
@@ -265,13 +268,6 @@ class TrackStats extends React.Component {
     
   }
   
-  renderPlays() {
-    let plays = this.state.play.slice()
-    return plays.reverse().map((member) =>
-        <Possession play={member}></Possession>
-   )
-  }
-
   handleActions(props) {
     let currList = this.state.passes.slice()
     let currPlays = this.state.play.slice()
@@ -427,7 +423,7 @@ class TrackStats extends React.Component {
                 pathname:"/",
                 }}
                 ><HomeRoundedIcon fontSize='large'> </HomeRoundedIcon>
-                </Link>
+        </Link>
           
       </Grid>
 
@@ -440,17 +436,9 @@ class TrackStats extends React.Component {
       </Box>
       </Grid>
       <Grid item xs={2}>
-        {this.state.showRosterAdmin &&
-          <PersonAddIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
+          <PersonAddRoundedIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
+          </PersonAddRoundedIcon>
 
-          </PersonAddIcon>
-        }
-        
-        {!this.state.showRosterAdmin &&
-
-        <PersonAddIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
-        </PersonAddIcon>
-  }
       </Grid>
       </Grid>
 
@@ -506,7 +494,12 @@ class TrackStats extends React.Component {
           minWidth: "48%",
         }}>
           {m_line}
-        </ButtonGroup></div> : <div> <h2> <Button variant='contained' onClick={() => this.setState({showRosterAdmin:true})}>Select who's on the line!</Button> </h2></div> 
+        </ButtonGroup></div> : 
+        <div> 
+            <Button variant='contained' onClick={() => this.setState({showRosterAdmin:true})}>
+            Select everyone from your roster that is playing today!
+            </Button> 
+        </div> 
       }
       
       </Container>
@@ -528,14 +521,6 @@ class TrackStats extends React.Component {
           
         </AccordionDetails>
       </Accordion>
-
-      {/* <Possession play={this.state.passes}  onClick={() => this.setState({showAllPossessions:!this.state.showAllPossessions})} ></Possession>
-      {this.state.showAllPossessions &&
-      this.renderPlays()
-      }
-      {!this.state.showAllPossessions &&
-      <p>Hiding All Possessions</p>
-      } */}
 
       </Container>
 
