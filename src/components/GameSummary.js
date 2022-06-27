@@ -258,7 +258,7 @@ function ScoreBoard(props) {
                 DropWeight +"*Drops +"+ 
                 TAWeight+"*Tas +"+
                 passWeight+"*passes"}
-><TableCell align="right" onClick={() => handleSort('value')}>  
+                ><TableCell align="right" onClick={() => handleSort('value')}>  
                     Net $
                 </TableCell></Tooltip>
                 <TableCell align="right"> Fave Target(s)</TableCell>

@@ -1,5 +1,5 @@
 import './App.css';
-import {Button, ButtonGroup, Container, Box,Grid,Dialog, Accordion, AccordionSummary, AccordionDetails,Typography} from '@mui/material';
+import {Button, ButtonGroup, Container, Box,Grid,Dialog, Accordion, AccordionSummary, AccordionDetails} from '@mui/material';
 import { Link } from "react-router-dom";
 
 import Possession from './components/Possession'
@@ -8,9 +8,8 @@ import ScoreBoard from './components/ScoreBoard'
 import GameSummary from './components/GameSummary'
 import Roster from './components/Roster'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
@@ -408,12 +407,13 @@ class TrackStats extends React.Component {
       <Button onClick={() => this.handleAction({action})} fullWidth id={action} key={action}>{action}</Button>
     </Box>
     )   
-  
+    const plays = this.state.play.slice()
+
     
   return (
     <div className="App">
 
-      <Dialog open={this.state.showRosterAdmin}>
+      <Dialog onClose={() => this.setState({showRosterAdmin:false})} open={this.state.showRosterAdmin}>
       <Roster onClick={this.onRosterClick} onSaveClick={this.onSaveClick} team={this.state.team} line={this.state.line}></Roster>
       {this.renderRosterAdmin()}
       </Dialog>
@@ -441,15 +441,15 @@ class TrackStats extends React.Component {
       </Grid>
       <Grid item xs={2}>
         {this.state.showRosterAdmin &&
-          <ExpandLessRoundedIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
+          <PersonAddIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
 
-          </ExpandLessRoundedIcon>
+          </PersonAddIcon>
         }
         
         {!this.state.showRosterAdmin &&
 
-        <ExpandMoreRoundedIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
-        </ExpandMoreRoundedIcon>
+        <PersonAddIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
+        </PersonAddIcon>
   }
       </Grid>
       </Grid>
@@ -517,10 +517,12 @@ class TrackStats extends React.Component {
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography><Container>{this.state.passes.join('=>')}</Container></Typography>
+          <Possession play={this.state.passes}/> 
         </AccordionSummary>
         <AccordionDetails>
-          {this.state.play.reverse().map((e) => {
+          {
+            
+            plays.reverse().map((e) => {
             return <Possession play={e}/>
           })}
           
