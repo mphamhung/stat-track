@@ -102,7 +102,9 @@ function ScoreBoard(props) {
           }).concat(
           props.f_players.map((player) => {
               return [player.name,0]
-          }))
+          })).concat(
+          ['G', 'D', 'TA', 'Drop', 'Huck'].map((action => [action,0]))            
+          )
       )]
       }).concat(
       props.f_players.map((player) => {

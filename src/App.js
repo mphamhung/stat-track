@@ -1,5 +1,5 @@
 import './App.css';
-import {Button, ButtonGroup, Container, Box,Grid,Dialog, Accordion, AccordionSummary, AccordionDetails} from '@mui/material';
+import {Button, ButtonGroup, Container, Box,Grid,Dialog, Accordion, AccordionSummary, AccordionDetails, Paper, List} from '@mui/material';
 import { Link } from "react-router-dom";
 
 import Possession from './components/Possession'
@@ -10,14 +10,17 @@ import Roster from './components/Roster'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
+import UndoRoundedIcon from '@mui/icons-material/UndoRounded';
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
 import {useSearchParams} from  'react-router-dom'
+import { Undo } from '@mui/icons-material';
 
 const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 
-const actions = ['TA', "D", "Drop", "Undo"];
+const actions = ['TA', "D", "Drop", "Huck"];
+
 const player_list = [
   {name: "Michael", gender: "M"},
   {name: "Marco", gender: "M"},
@@ -72,13 +75,13 @@ class TrackStats extends React.Component {
       inputGender: "M",
       showRosterAdmin: false, 
       showAllPossessions: false,
+      showSummary: false,
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePlayerClick = this.handlePlayerClick.bind(this);
     this.onRosterClick =this.onRosterClick.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
-
 
   }
 
@@ -271,6 +274,7 @@ class TrackStats extends React.Component {
   handleActions(props) {
     let currList = this.state.passes.slice()
     let currPlays = this.state.play.slice()
+    console.log(props.action)
     if (currList.length > 0 && (props.action === 'G' || props.action ==='TA')) {
       currList.push(props.action)
       currPlays.push(currList)
@@ -331,6 +335,13 @@ class TrackStats extends React.Component {
       this.setState({
         play: currPlays,
         passes:[]
+      })
+    this.setAllStatus(0)
+    }
+    else if(props.action === "Huck") {
+      currList.push(props.action)
+      this.setState({
+        passes:currList
       })
     this.setAllStatus(0)
     }
@@ -460,17 +471,24 @@ class TrackStats extends React.Component {
       
       </Container>
       <Container>
-
-      <Box m={1}>
-      <ButtonGroup 
+      <Grid container spacing ={2}>
+        <Grid item xs={8}>
+        <ButtonGroup 
           size="medium" 
         style={{
         border: "none",
       }}
       >
         {buttonActions}
+        <Box m={1}>
+        <Button onClick={() => this.handleAction({action:'Undo'})} fullWidth id='Undo' key='Undo'><UndoRoundedIcon/></Button>
+        </Box>
+        
       </ButtonGroup>
-      </Box>
+        </Grid>
+      
+      </Grid>
+      
       </Container>
 
       <Container>
@@ -504,28 +522,42 @@ class TrackStats extends React.Component {
       
       </Container>
       <Container>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreRoundedIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <Possession play={this.state.passes}/> 
-        </AccordionSummary>
-        <AccordionDetails>
+     
+      {/* <Paper style={{maxHeight: 200, overflow: 'auto'}}> */}
+        <List>
+        <Possession play={this.state.passes}/> 
+        </List>
+        <Paper style={{maxHeight: 200, overflow: 'auto'}}>
+        <List>
           {
-            
             plays.reverse().map((e) => {
-            return <Possession play={e}/>
+            return <Box>
+              <Possession play={e}/>
+              </Box>
           })}
-          
-        </AccordionDetails>
-      </Accordion>
+                      </List>
 
+        </Paper>
+          
       </Container>
 
       <Container>
+
+        {this.state.showSummary ?
+        <div>
       <GameSummary m_players = {this.state.males} f_players = {this.state.females} possessions={this.state.play}></GameSummary> 
+      <Button onClick={() => this.setState({showSummary:false})}>
+            Close Summary
+          </Button>    
+
+        </div>
+
+
+      :
+          <Button onClick={() => this.setState({showSummary:true})}>
+            Show Summary
+          </Button>
+        }
 
       </Container>
 
