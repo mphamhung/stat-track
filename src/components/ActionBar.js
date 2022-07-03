@@ -22,7 +22,7 @@ export default function ActionBar(props) {
 
         >
         {positiveActions.map((action) =>
-            <Paper style = {{backgroundColor:'#257300', 
+            <Paper elevation='3' style = {{backgroundColor:'#257300', 
                             color:'white', height:'45px', width:'45px', 
                             display:'flex', alignItems: 'center', justifyContent: 'center',}}
                             onClick={() => handleAction({action})}>
@@ -41,7 +41,7 @@ export default function ActionBar(props) {
 
         >
         {otherActions.map((action) =>
-            <Paper style = {{backgroundColor:'gray', 
+            <Paper elevation='3' style = {{backgroundColor:'gray', 
             color:'white', height:'45px', width:'45px', 
             display:'flex', alignItems: 'center', justifyContent: 'center',}}
             onClick={() => handleAction({action})}>
@@ -60,7 +60,7 @@ export default function ActionBar(props) {
 
         >
         {negativeActions.map((action) =>
-            <Paper style = {{backgroundColor:'#AF0000', 
+            <Paper elevation='3'  style = {{backgroundColor:'#AF0000', 
             color:'white', height:'45px', width:'45px', 
             display:'flex', alignItems: 'center', justifyContent: 'center',}}
             onClick={() => handleAction({action})}>

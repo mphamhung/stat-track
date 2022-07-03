@@ -13,7 +13,7 @@ export default function CurrentPlayers(props) {
     const f_line = line.filter((player)=> player.gender ==="F").map((player) => <PlayerButton player ={player} onClick={handlePlayerClick}></PlayerButton>)
     
     return (
-        <Paper elevation='0' style={{minHeight: 400, overflow: 'auto',}}>
+        <Paper elevation='0' style={{minHeight: 200, overflow: 'auto',}}>
             
                     <Container >
                     <Container >

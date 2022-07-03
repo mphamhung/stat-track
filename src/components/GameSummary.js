@@ -28,7 +28,7 @@ function createData(
   }
   
 
-function ScoreBoard(props) {
+function GameSummary(props) {
     // const initialStae = () => [];
     const [sortKey, setSortKey] = useState("Name")    
     const [ascending, setAscending] = useState(true)   
@@ -45,84 +45,50 @@ function ScoreBoard(props) {
     }
 
     const touches = new Map(
-        props.m_players.map((player) => {
+        props.line.map((player) => {
            return [player.name,0]
-        }).concat(
-        props.f_players.map((player) => {
-            return [player.name,0]
-        }))
+        })
     )
     const goals = new Map(
-        props.m_players.map((player) => {
+        props.line.map((player) => {
            return [player.name,0]
-        }).concat(
-        props.f_players.map((player) => {
-            return [player.name,0]
-        }))
+        })
     )
     const assists = new Map(
-        props.m_players.map((player) => {
+        props.line.map((player) => {
            return [player.name,0]
-        }).concat(
-        props.f_players.map((player) => {
-            return [player.name,0]
-        }))
+        })
     )
     const assists2 = new Map(
-      props.m_players.map((player) => {
+      props.line.map((player) => {
          return [player.name,0]
-      }).concat(
-      props.f_players.map((player) => {
-          return [player.name,0]
-      }))
+      })
   )
 
     const Ds = new Map(
-        props.m_players.map((player) => {
+        props.line.map((player) => {
            return [player.name,0]
-        }).concat(
-        props.f_players.map((player) => {
-            return [player.name,0]
-        }))
+        })
     )
     const TAs = new Map(
-        props.m_players.map((player) => {
+        props.line.map((player) => {
            return [player.name,0]
-        }).concat(
-        props.f_players.map((player) => {
-            return [player.name,0]
-        }))
+        })
     )
 
     const passedTo = new Map(
-      props.m_players.map((player) => {
+      props.line.map((player) => {
          return [player.name, new Map(
-          props.m_players.map((player) => {
+          props.line.map((player) => {
              return [player.name,0]
-          }).concat(
-          props.f_players.map((player) => {
-              return [player.name,0]
-          }))
+          })
       )]
-      }).concat(
-      props.f_players.map((player) => {
-          return [player.name, new Map(
-            props.m_players.map((player) => {
-               return [player.name,0]
-            }).concat(
-            props.f_players.map((player) => {
-                return [player.name,0]
-            }))
-        )]
-      }))
+      })
   )
     const Drops = new Map(
-        props.m_players.map((player) => {
+        props.line.map((player) => {
           return [player.name,0]
-        }).concat(
-        props.f_players.map((player) => {
-            return [player.name,0]
-        }))
+        })
     )
 
     props.possessions.slice().flat().map((e) => {
@@ -161,12 +127,9 @@ function ScoreBoard(props) {
     })
 
     const favTarget = new Map(
-      props.m_players.map((player) => {
+      props.line.map((player) => {
         return [player.name,'']
-      }).concat(
-      props.f_players.map((player) => {
-          return [player.name,'']
-      }))
+      })
     )
 
     const filterOut = (array, target) => array.filter(element => element[1] === target);
@@ -237,7 +200,7 @@ function ScoreBoard(props) {
 
     
     return (
-        <TableContainer component={Paper}>
+      <TableContainer component={Paper}>
           <Table  sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
@@ -303,8 +266,9 @@ function ScoreBoard(props) {
             }>Output to Clipboard</Button>
 
         </TableContainer>
+        
       );
   }
   
 
-export default ScoreBoard;
+export default GameSummary;

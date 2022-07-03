@@ -9,7 +9,7 @@ import React from 'react'
 
 
 function Possession(props) {
-    let text = props.play.join(' => ')
+    let text = props.play.join(' > ')
     let format={color:'#80B2FF', text:''}
     switch (props.play[props.play.length - 1]) {
       case "G":

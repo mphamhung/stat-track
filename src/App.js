@@ -1,16 +1,16 @@
 import './App.css';
-import {Container,Dialog} from '@mui/material';
+import {Container,Dialog, Button, Box} from '@mui/material';
 
 
 import ScoreBoard from './components/ScoreBoard'
 import Possessions from './components/Possessions';
-import GameSummary from './components/GameSummary'
 import CurrentPlayers from './components/CurrentPlayers';
 import Roster from './components/Roster'
 import ActionBar from './components/ActionBar';
+ 
 
 import React from 'react'
-import {useSearchParams} from  'react-router-dom'
+import {useLocation, useSearchParams, useNavigate} from  'react-router-dom'
 
 
 const db_url = "https://polydactyl-truthful-hyena.glitch.me"
@@ -41,10 +41,21 @@ function App(prop) {
   let away = searchParams.get('versus')
   let uID = searchParams.get('uID')
   let date = searchParams.get('date')
-  
+  const location = useLocation()
+  const navigate = useNavigate()
   return(
     <div>
     <TrackStats home={home} versus={away} date={date} uID={uID}></TrackStats>
+    <Container>
+    <Box mb={1} mt={1}>
+    <Button variant='contained' style={{width:'100%'}} onClick={(e)=>navigate('/summary/'+location.search)}>
+        View Summary
+      </Button>
+    </Box>
+    </Container>
+
+    
+    
     </div>
 
   )
@@ -166,36 +177,6 @@ class TrackStats extends React.Component {
     })
     }
    }
-
-  renderRosterAdmin() {
-    return (
-      <div>
-        <Container>
-        <form
-        onSubmit={this.handleSubmit}>
-          <input
-            type = 'text'
-            value={this.state.inputName}
-            onChange = {this.handleChange}
-            name="inputName"
-          />
-          <select
-          value = {this.state.inputGender}
-          onChange ={this.handleChange}
-          name="inputGender">
-            <option value = 'M'>M</option>
-            <option value = 'F'>F</option>
-          </select>
-          <button variant='contained' name='new'>New</button>
-          <button variant='contained' name='del'>Remove</button>
-          <button variant='contained' name='pop'>Populate</button>
-          <button variant='contained' name='del_plays'>Del Plays</button>
-        </form>
-        </Container>
-
-      </div>
-      )
-  }
   
   fetch_players() {
     fetch(db_url+"/players?gender=M&team_name="+this.state.team+"&_sort=name")
@@ -223,16 +204,21 @@ class TrackStats extends React.Component {
     .then(resp => resp.json())
     .then(data => {
       if (!data.length){
-        
-        
+                
       }
 
       else {
         let possessions = data[0].possessions
         let date = data[0].date
         let id = data[0].id
+        let line = data[0].line
         // console.log(possessions)
-        this.setState({play: possessions, date:date, db_id:id})
+        if (line){
+          this.setState({play: possessions, date:date, db_id:id, line:line})
+        }
+        else {
+          this.setState({play: possessions, date:date, db_id:id})
+        }
 
       }
 
@@ -255,12 +241,13 @@ class TrackStats extends React.Component {
     let date = this.state.date
     let id = this.state.db_id
     let uID = this.state.game_id
+    let line = this.state.line
     // console.log(possessions)
 
     fetch(db_url+"/games/"+id, {
       method: 'PUT',
       headers: { "Content-Type": "application/json"},
-      body: JSON.stringify({team_name, versus, date, possessions, uID})
+      body: JSON.stringify({team_name, versus, date, possessions, uID, line})
     })
     console.log('updated plays!')
 
@@ -376,6 +363,7 @@ class TrackStats extends React.Component {
 
   onSaveClick(props) {
     // console.log(this.state.showRosterAdmin)
+
     this.setState({showRosterAdmin:false})
   }
   onRosterClick(male, female) {
@@ -403,7 +391,7 @@ class TrackStats extends React.Component {
 
       <Dialog onClose={() => this.setState({showRosterAdmin:false})} open={this.state.showRosterAdmin}>
       <Roster onClick={this.onRosterClick} onSaveClick={this.onSaveClick} team={this.state.team} line={this.state.line}></Roster>
-      {this.renderRosterAdmin()}
+      {/* {this.renderRosterAdmin()} */}
       </Dialog>
       <ScoreBoard plays={this.state.play}></ScoreBoard>
 
@@ -417,11 +405,10 @@ class TrackStats extends React.Component {
       <Possessions currentPossessions = {this.state.passes} prevPossessions={plays.reverse()} handleUndoClick={() => this.handleAction({action:'Undo'})}/>
 
       </Container>
-
-      <Container>
+      
+      {/* <Container>
       <GameSummary m_players = {this.state.males} f_players = {this.state.females} possessions={this.state.play}></GameSummary> 
-
-      </Container>
+      </Container> */}
 
 
     </div>

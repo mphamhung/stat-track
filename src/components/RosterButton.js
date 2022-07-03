@@ -1,9 +1,9 @@
 import '../App.css';
-import {Box} from '@mui/material';
+import {Box,Stack} from '@mui/material';
 
 import { Checkbox } from '@mui/material';
-
-// import ButtonGroup from '@mui/material/ButtonGroup';
+// import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ClearIcon from '@mui/icons-material/Clear';// import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
 
@@ -15,6 +15,7 @@ function RosterButton(props) {
     let id = props.player.id
     let status = props.player.status
     let gender = props.player.gender
+    let editMode = props.editMode
     return (
       <Box style={{
         display: 'flex',
@@ -22,9 +23,14 @@ function RosterButton(props) {
         justifyContent: 'left'
       }} 
         onClick={() => func({name, id, gender})} m={padding} >
-          <Box>
-          <Checkbox  label={name} checked={status}></Checkbox> {name} 
-          </Box>
+          <Stack direction="row" style={{maxHeight:'40px',minHeight:'40px', alignItems:'center'}} spacing={1}>
+          {!editMode ? <Checkbox  label={name} checked={status}></Checkbox> : 
+          <Box style={{alignItems:'center'}}>
+            <ClearIcon /> 
+            </Box>
+            }
+          {name} 
+          </Stack>
       </Box>
     )
   }

@@ -3,7 +3,7 @@ import {AppBar, Toolbar, IconButton, Typography, Drawer, Box} from  '@mui/materi
 import {List, ListItem, ListItemButton,ListItemText, Divider} from '@mui/material';
 import {Menu}  from '@mui/icons-material';
 import React, { useEffect } from 'react'
-
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 export default function TopBar(props) {
     
     const [searchParams] = useSearchParams() 
@@ -13,23 +13,34 @@ export default function TopBar(props) {
     let date = searchParams.get('date')
     
     const [drawerOpen, setDrawerOpen] = React.useState(false)
+    const [adminDrawerOpen, setAdminDrawerOpen] = React.useState(false)
+    const [text, setText] = React.useState("")
     const anchor = 'left'
 
     const location = useLocation();
 
     const [color, setColor] = React.useState('grey')
-    let text = (location.pathname === '/game/') ? `${home} vs ${away} ${date}` : "Home"
+    // let text = (location.pathname === '/game/') ? `${home} vs ${away} ${date}` : "Create a New Game"
 
     useEffect( () => {
-        if (location.pathname === '/game/') {
+        if (location.pathname === '/game/' || location.pathname === '/summary/') {
             // Fetch Team Color
             setColor('#6200EE')
+            setText(`${home} vs ${away} ${date}`)
+        }
+        else if (location.pathname === '/admin') {
+            setText("Admin")
+
+        }
+        else if (location.pathname === '/feedback'){
+            setText("Thanks for the feedback!")
         }
         else {
             setColor('grey')
+            setText("Create a New Game")
         }
 
-    }, [text, location.pathname])
+    }, [text, location.pathname, home, away, date])
 
 
 
@@ -50,6 +61,16 @@ export default function TopBar(props) {
                     <Typography component="div" sx={{ flexGrow: 1 }}>
                         {text}
                     </Typography>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                        onClick={() => setAdminDrawerOpen(true)}
+                    >
+                        <AdminPanelSettingsIcon />
+                    </IconButton>
                 </Toolbar>            
             </AppBar>
 
@@ -78,14 +99,64 @@ export default function TopBar(props) {
             </ListItem>
             <Divider />
 
-            {['See Player Stats', 'Export Current Game', 'Leave Feedback'].map((text, index) => (
+            {['Leave Feedback'].map((text, index) => (
             <ListItem key={text} disablePadding>
+                <Link to={{
+                    pathname:"feedback",
+                    }}
+                    >
                 <ListItemButton>
                 <ListItemText primary={text} />
                 </ListItemButton>
+                    </Link>
+
             </ListItem>
             ))}
         </List>
+
+        </Box>
+        </Drawer>
+        <Drawer
+        anchor='right'
+        open={adminDrawerOpen}
+        onClose={() => setAdminDrawerOpen(false)}
+        >
+            <Box
+                sx={{ width: 250 }}
+                role="presentation"
+                onClick={() => setAdminDrawerOpen(false)}
+                onKeyDown={() => setAdminDrawerOpen(false)}
+                >
+            <List>
+            <ListItem key="Admin" disablePadding>
+                <ListItemButton>
+                <Link to={{
+                    pathname:"admin",
+                    }}
+                    >
+                    <ListItemText primary="Go to Admin Page" />
+                </Link>
+                           
+                </ListItemButton>
+
+            </ListItem>
+            { location.search &&
+                <ListItem key="Edit">
+                <ListItemButton>
+                <Link to={{
+                    pathname:"game/"+location.search,
+                    }}
+                    >
+                    <ListItemText primary="Edit Current Game" />
+                </Link>
+                            
+                </ListItemButton>
+                </ListItem>
+
+            }
+           
+            <Divider />
+            </List>
 
         </Box>
         </Drawer>

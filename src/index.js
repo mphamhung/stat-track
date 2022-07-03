@@ -7,7 +7,9 @@ import { BrowserRouter, Routes, Route} from "react-router-dom";
 // import { Switch } from 'react-router';
 import LandingPage from './LandingPage';
 import TopBar from './components/TopBar';
-
+import AdminPage from './AdminPage';
+import SummaryPage  from './SummaryPage'
+import FeedbackPage from './FeedbackPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
@@ -16,6 +18,10 @@ root.render(
       <Routes path="/" >
         <Route index element={<LandingPage/>} />
         <Route path='game' element={<App/>}/>
+        <Route path='admin' element={<AdminPage/>}/>
+        <Route path='summary' element={<SummaryPage/>}/>
+        <Route path='feedback' element={<FeedbackPage />}/>
+
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
