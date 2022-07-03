@@ -406,13 +406,14 @@ class TrackStats extends React.Component {
       {this.renderRosterAdmin()}
       </Dialog>
       <ScoreBoard plays={this.state.play}></ScoreBoard>
-      <ActionBar handleAction={this.handleAction}/>
 
       <CurrentPlayers 
           handleRosterButtonClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} 
           handlePlayerClick={this.handlePlayerClick} 
           line={this.state.line}/>
       <Container>
+      <ActionBar handleAction={this.handleAction}/>
+
       <Possessions currentPossessions = {this.state.passes} prevPossessions={plays.reverse()} handleUndoClick={() => this.handleAction({action:'Undo'})}/>
 
       </Container>
