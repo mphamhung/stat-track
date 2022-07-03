@@ -1,23 +1,20 @@
 import './App.css';
-import {Button, ButtonGroup, Container, Box,Grid,Dialog, Accordion, AccordionSummary, AccordionDetails} from '@mui/material';
-import { Link } from "react-router-dom";
+import {Container,Dialog} from '@mui/material';
 
-import Possession from './components/Possession'
-import PlayerButton from './components/PlayerButton';
+
 import ScoreBoard from './components/ScoreBoard'
+import Possessions from './components/Possessions';
 import GameSummary from './components/GameSummary'
+import CurrentPlayers from './components/CurrentPlayers';
 import Roster from './components/Roster'
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
-// import ButtonGroup from '@mui/material/ButtonGroup';
-// import Alert from '@mui/material/Alert';
+import ActionBar from './components/ActionBar';
+
 import React from 'react'
 import {useSearchParams} from  'react-router-dom'
 
+
 const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 
-const actions = ['TA', "D", "Drop", "Undo"];
 const player_list = [
   {name: "Michael", gender: "M"},
   {name: "Marco", gender: "M"},
@@ -78,6 +75,8 @@ class TrackStats extends React.Component {
     this.handlePlayerClick = this.handlePlayerClick.bind(this);
     this.onRosterClick =this.onRosterClick.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
+    this.handleAction = this.handleAction.bind(this);
+    this.handleActions = this.handleActions.bind(this);
 
 
   }
@@ -336,6 +335,8 @@ class TrackStats extends React.Component {
     }
   }
   async handleAction(props) {
+
+    console.log(props.action)
     await this.handleActions(props)
     this.pushPlaytoDB() 
     // console.log(props)
@@ -394,16 +395,7 @@ class TrackStats extends React.Component {
 
   render() {
 
-
-    const m_line = this.state.line.filter((player)=> player.gender ==="M").map((player) => <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>)
-    const f_line = this.state.line.filter((player)=> player.gender ==="F").map((player) => <PlayerButton player ={player} onClick={this.handlePlayerClick}></PlayerButton>)
-    
-    const buttonActions = actions.map((action) =>
-    <Box m={1}>
-      <Button onClick={() => this.handleAction({action})} fullWidth id={action} key={action}>{action}</Button>
-    </Box>
-    )   
-    const plays = this.state.play.slice()
+  const plays = this.state.play.slice()
 
     
   return (
@@ -413,114 +405,15 @@ class TrackStats extends React.Component {
       <Roster onClick={this.onRosterClick} onSaveClick={this.onSaveClick} team={this.state.team} line={this.state.line}></Roster>
       {this.renderRosterAdmin()}
       </Dialog>
-      
-      
-      <Grid container spacing ={2}>
-     
-      <Grid item xs={2}>
-        
-        <Link to={{
-                pathname:"/",
-                }}
-                ><HomeRoundedIcon fontSize='large'> </HomeRoundedIcon>
-        </Link>
-          
-      </Grid>
-
-
-      <Grid item xs={8}>
-
-
-      <Box>
-      game {this.state.game_id} vs {this.state.away} on {this.state.date} 
-      </Box>
-      </Grid>
-      <Grid item xs={2}>
-          <PersonAddRoundedIcon onClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} fontSize='large'>
-          </PersonAddRoundedIcon>
-
-      </Grid>
-      </Grid>
-
-      
-
-      <Container>
-      <ButtonGroup >
-      <Box m={1}>
-      <Button onClick={() => this.handleAction({action:"G"})} fullWidth key="G">G</Button>
-      </Box>
-      <Box m={1}>
       <ScoreBoard plays={this.state.play}></ScoreBoard>
-      </Box>
+      <ActionBar handleAction={this.handleAction}/>
 
-      <Box m={1}>
-      <Button onClick={() => this.handleAction({action:"AG"})} fullWidth key="AG">AG</Button>
-      </Box>
-      </ButtonGroup>
-      
-      </Container>
+      <CurrentPlayers 
+          handleRosterButtonClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} 
+          handlePlayerClick={this.handlePlayerClick} 
+          line={this.state.line}/>
       <Container>
-
-      <Box m={1}>
-      <ButtonGroup 
-          size="medium" 
-        style={{
-        border: "none",
-      }}
-      >
-        {buttonActions}
-      </ButtonGroup>
-      </Box>
-      </Container>
-
-      <Container>
-      {
-        (m_line.length+f_line.length) ?  <div><ButtonGroup 
-        orientation="vertical" 
-        size='large' 
-        variant="contained" 
-        style={{
-          border: "solid",
-          minWidth: "48%",
-        }}>
-          {f_line}
-        </ButtonGroup>
-        <ButtonGroup 
-        orientation="vertical" 
-        size='large' 
-        variant="contained" 
-        style={{
-          border: "solid",
-          minWidth: "48%",
-        }}>
-          {m_line}
-        </ButtonGroup></div> : 
-        <div> 
-            <Button variant='contained' onClick={() => this.setState({showRosterAdmin:true})}>
-            Select everyone from your roster that is playing today!
-            </Button> 
-        </div> 
-      }
-      
-      </Container>
-      <Container>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreRoundedIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <Possession play={this.state.passes}/> 
-        </AccordionSummary>
-        <AccordionDetails>
-          {
-            
-            plays.reverse().map((e) => {
-            return <Possession play={e}/>
-          })}
-          
-        </AccordionDetails>
-      </Accordion>
+      <Possessions currentPossessions = {this.state.passes} prevPossessions={plays.reverse()} handleUndoClick={() => this.handleAction({action:'Undo'})}/>
 
       </Container>
 

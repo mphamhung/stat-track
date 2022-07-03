@@ -1,9 +1,11 @@
 
 import '../App.css';
-import {Chip, Stack} from '@mui/material';
+import {Paper, Stack, Typography, Container,Divider} from '@mui/material';
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
+
+import {SentimentVerySatisfied, MoodBad} from '@mui/icons-material/';
 
 function ScoreBoard(props) {
     let plays = props.plays.slice()
@@ -16,13 +18,48 @@ function ScoreBoard(props) {
       return total + toAdd
     }, 0)
 
+    let diff = home-away
     
     return (
-    <Stack direction = "row">
-        <Chip label={home} color='success' />
-        <Chip label={away} color='error'/>
-    </Stack>
+
+    <Container>
+    <Stack direction='row' justifyContent="space-between" mt={1} mb={1}>
+      <Paper elevation='0' style={{display:'flex', alignItems: 'center', justifyContent: 'center',}}>
+          <Typography >
+          Current Score: 
+        </Typography>
+      </Paper>
       
+      <Stack 
+        direction = "row"
+        spacing = '5px'
+        >
+        <Paper  elevation='5' style={{backgroundColor: '#257300', color:'white', 
+                                    width: '60px', height:'38px', display:'flex',
+                                  alignItems: 'center', justifyContent: 'center',}}>
+        <Typography >
+        {home}
+        </Typography>
+
+        </Paper>
+        <Paper elevation='5' style={{backgroundColor: '#AF0000', color:'white',
+                                          width: '60px', height:'38px', display:'flex',
+                                          alignItems: 'center', justifyContent: 'center',}}>
+        <Typography>
+        {away}
+        </Typography>        
+        </Paper>
+        </Stack>
+      <Paper elevation='0' style={{display:'flex', alignItems: 'center', justifyContent: 'center',}}>
+
+      {(diff > 0) ? <SentimentVerySatisfied fontSize="large"/> : <MoodBad fontSize="large"/>}
+      </Paper>
+
+    </Stack>
+    <Divider/>
+
+    </Container>
+     
     )
   }
   

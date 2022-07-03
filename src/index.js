@@ -4,12 +4,15 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route} from "react-router-dom";
+// import { Switch } from 'react-router';
 import LandingPage from './LandingPage';
+import TopBar from './components/TopBar';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
+      <TopBar/>
       <Routes path="/" >
         <Route index element={<LandingPage/>} />
         <Route path='game' element={<App/>}/>

@@ -1,5 +1,8 @@
 import '../App.css';
-import {Alert} from '@mui/material';
+import {Typography} from '@mui/material';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
@@ -7,31 +10,55 @@ import React from 'react'
 
 function Possession(props) {
     let text = props.play.join(' => ')
+    let format={color:'blue', text:''}
+    switch (props.play[props.play.length - 1]) {
+      case "G":
+        format.text='Goal!!'
+        format.color='#CEECC1'
+      break;
+      case "TA":
+        format.text='Throwaway'
+        format.color='#FFF495'
+
+      break;
+      case "Drop":
+        format.text='Drop!'
+        format.color='#FFF495'
+
+      break;
+      case "AG":
+        format.text='Away Goal :('
+        format.color='#ECCEC1'
+
+      break;
+      case "D":
+        format.text='Nice D'
+        format.color='blue'
+
+      break;
+      default:
+        format.text=''
+        format.color='blue'
+    }
     
-    if (props.play[props.play.length - 1] === 'G')
-      return (
-        <Alert onClick={props.onClick} severity='success'>{text}</Alert>
-      )
-    else if (props.play[props.play.length - 1] === 'TA'){
-      return (
-      <Alert onClick={props.onClick} severity='warning'>{text}</Alert>
-      )
-    }
-    else if (props.play[props.play.length - 1] === 'Drop'){
-      return (
-      <Alert onClick={props.onClick} severity='warning'>{text}</Alert>
-      )
-    }
-    else if (props.play[props.play.length - 1] === 'AG'){
-      return (
-      <Alert onClick={props.onClick} severity='error'>{text}</Alert>
-      )
-    }
-    else {
-      return (
-        <Alert onClick={props.onClick} severity='info'>{text}</Alert>
-      )
-    }
+    return (
+      <Accordion style={{backgroundColor:format.color}}>
+        <AccordionSummary
+        style={{textAlign:'left'}}
+        >
+        <Typography>
+        {format.text}
+        </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+        {text}
+        </AccordionDetails>
+      </Accordion>
+      // <Paper style={{textAlign:'left'}}>
+      
+      // </Paper>
+    )
+    
   }
 
   export default Possession;
