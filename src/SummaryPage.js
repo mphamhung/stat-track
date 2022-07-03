@@ -1,6 +1,7 @@
 import { useState, useEffect} from 'react';
 import { useLocation} from  'react-router-dom'
 import GameSummary from './components/GameSummary.js'
+import ScoreBoard from './components/ScoreBoard.js';
 import {Container, } from '@mui/material'
 const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 
@@ -36,7 +37,7 @@ export default function SummaryPage (props) {
     }, [location.search])
     
     return  <Container>
-            
+        <ScoreBoard isFinal={true} plays={possessions}></ScoreBoard>
         <GameSummary line={line} possessions={possessions}></GameSummary> 
         </Container>
 }

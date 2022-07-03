@@ -8,6 +8,7 @@ import React from 'react'
 import {SentimentVerySatisfied, MoodBad} from '@mui/icons-material/';
 
 function ScoreBoard(props) {
+    let isFinal = props.isFinal
     let plays = props.plays.slice()
     let home = plays.reduce((total, play) => {
       let toAdd = (play[play.length - 1] === "G") ? 1 : 0
@@ -25,9 +26,15 @@ function ScoreBoard(props) {
     <Container>
     <Stack direction='row' justifyContent="space-between" mt={1} mb={1}>
       <Paper elevation='0' style={{display:'flex', alignItems: 'center', justifyContent: 'center', }}>
+      {isFinal ? 
           <Typography >
-          Current Score: 
+          Final Score:
         </Typography>
+        :
+        <Typography >
+          Current Score:
+        </Typography>
+      }
       </Paper>
       
       <Stack 
