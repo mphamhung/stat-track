@@ -174,11 +174,11 @@ export default function Roster(props) {
             
             {
               allSelected ?
-              <Typography onClick={() => onClearClick()}>
+              <Typography onClick={() => onClearClick()} style={{textDecoration: "underline"}}>
               Deselect All
             </Typography>
               :
-              <Typography onClick={() => onSelectAllClick()}>
+              <Typography onClick={() => onSelectAllClick()} style={{textDecoration: "underline"}}>
               Select All
             </Typography>
             }

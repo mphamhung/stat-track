@@ -140,7 +140,7 @@ export default function TopBar(props) {
                 </ListItemButton>
 
             </ListItem>
-            { location.search &&
+            { (location.pathname === '/summary/') &&
                 <ListItem key="Edit">
                 <ListItemButton>
                 <Link to={{
@@ -148,6 +148,20 @@ export default function TopBar(props) {
                     }}
                     >
                     <ListItemText primary="Edit Current Game" />
+                </Link>
+                            
+                </ListItemButton>
+                </ListItem>
+
+            }
+            { (location.pathname === '/game/') &&
+                <ListItem key="Edit">
+                <ListItemButton>
+                <Link to={{
+                    pathname:"summary/"+location.search,
+                    }}
+                    >
+                    <ListItemText primary="Go to Summary of Current Game" />
                 </Link>
                             
                 </ListItemButton>

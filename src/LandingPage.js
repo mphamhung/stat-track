@@ -66,7 +66,7 @@ function LandingPage(props) {
                             {game.date.split("-")[0]} {game.date.split("-")[1]}
                             </Typography>
                             <Stack direction="column" style={{maxWidth:"60%", minWidth:"60%", maxHeight:"60px", minHeight:"60px",
-                                }}>
+                                textDecoration: "underline"}}>
                                 <Typography>
                                     {game.team_name}
                                 </Typography>
