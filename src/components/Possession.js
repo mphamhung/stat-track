@@ -10,7 +10,7 @@ import React from 'react'
 
 function Possession(props) {
     let text = props.play.join(' => ')
-    let format={color:'blue', text:''}
+    let format={color:'#80B2FF', text:''}
     switch (props.play[props.play.length - 1]) {
       case "G":
         format.text='Goal!!'
@@ -33,12 +33,12 @@ function Possession(props) {
       break;
       case "D":
         format.text='Nice D'
-        format.color='blue'
+        format.color='#80B2FF'
 
       break;
       default:
         format.text=''
-        format.color='blue'
+        format.color='#80B2FF'
     }
     
     return (
