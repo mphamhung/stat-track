@@ -7,7 +7,6 @@ import Possessions from './components/Possessions';
 import CurrentPlayers from './components/CurrentPlayers';
 import Roster from './components/Roster'
 import ActionBar from './components/ActionBar';
-import StyleButton from './components/StyleButton'
 
 import React from 'react'
 import {useLocation, useSearchParams, useNavigate} from  'react-router-dom'
@@ -52,8 +51,6 @@ function App(prop) {
         View Summary
       </Button>
     </Box>
-    <StyleButton></StyleButton>
-
     </Container>
 
     
