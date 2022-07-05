@@ -7,7 +7,7 @@ import Possessions from './components/Possessions';
 import CurrentPlayers from './components/CurrentPlayers';
 import Roster from './components/Roster'
 import ActionBar from './components/ActionBar';
- 
+import StyleButton from './components/StyleButton'
 
 import React from 'react'
 import {useLocation, useSearchParams, useNavigate} from  'react-router-dom'
@@ -52,6 +52,8 @@ function App(prop) {
         View Summary
       </Button>
     </Box>
+    <StyleButton></StyleButton>
+
     </Container>
 
     
@@ -80,6 +82,7 @@ class TrackStats extends React.Component {
       inputGender: "M",
       showRosterAdmin: false, 
       showAllPossessions: false,
+      disabled:""
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -320,6 +323,9 @@ class TrackStats extends React.Component {
       })
     this.setAllStatus(0)
     }
+    this.setState({
+      disabled: ''
+    })
   }
   async handleAction(props) {
 
@@ -356,6 +362,7 @@ class TrackStats extends React.Component {
 
     this.setState({
       passes: currList,
+      disabled: props.name
     })
     
     
@@ -398,12 +405,13 @@ class TrackStats extends React.Component {
       <CurrentPlayers 
           handleRosterButtonClick={() => this.setState({showRosterAdmin:!this.state.showRosterAdmin})} 
           handlePlayerClick={this.handlePlayerClick} 
-          line={this.state.line}/>
+          line={this.state.line}
+          disabled={this.state.disabled}
+          />
       <Container>
       <ActionBar handleAction={this.handleAction}/>
 
       <Possessions currentPossessions = {this.state.passes} prevPossessions={plays.reverse()} handleUndoClick={() => this.handleAction({action:'Undo'})}/>
-
       </Container>
       
       {/* <Container>
