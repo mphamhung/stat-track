@@ -7,10 +7,11 @@ import Possessions from './components/Possessions';
 import CurrentPlayers from './components/CurrentPlayers';
 import Roster from './components/Roster'
 import ActionBar from './components/ActionBar';
-
+import StyleButtons from './components/StyleButtons';
 import React from 'react'
 import {useLocation, useSearchParams, useNavigate} from  'react-router-dom'
 
+import GameSummary from './components/GameSummary';
 
 const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 
@@ -79,7 +80,8 @@ class TrackStats extends React.Component {
       inputGender: "M",
       showRosterAdmin: false, 
       showAllPossessions: false,
-      disabled:""
+      disabled:"",
+      modDisabled:[]
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -88,6 +90,7 @@ class TrackStats extends React.Component {
     this.onSaveClick = this.onSaveClick.bind(this);
     this.handleAction = this.handleAction.bind(this);
     this.handleActions = this.handleActions.bind(this);
+    this.handleStyle = this.handleStyle.bind(this);
 
 
   }
@@ -321,7 +324,8 @@ class TrackStats extends React.Component {
     this.setAllStatus(0)
     }
     this.setState({
-      disabled: ''
+      disabled: '',
+      modDisabled:[]
     })
   }
   async handleAction(props) {
@@ -359,7 +363,8 @@ class TrackStats extends React.Component {
 
     this.setState({
       passes: currList,
-      disabled: props.name
+      disabled: props.name,
+      modDisabled:[]
     })
     
     
@@ -369,6 +374,7 @@ class TrackStats extends React.Component {
     // console.log(this.state.showRosterAdmin)
 
     this.setState({showRosterAdmin:false})
+    this.pushPlaytoDB()
   }
   onRosterClick(male, female) {
     // console.log(male, female)
@@ -383,6 +389,28 @@ class TrackStats extends React.Component {
     this.setState({
       line:line
     })
+  }
+
+  handleStyle(e, action) {
+    let currList = this.state.passes.slice()
+    let currMods = this.state.modDisabled.slice()
+    let person = currList.pop()
+    if (person){
+      if (person.split('+').length>1){
+        currList.push(person+'/'+action)
+
+      }
+      else {
+        currList.push(person+'+'+action)
+
+      }
+    currMods.push(action)
+    this.setState({
+      passes: currList,
+      modDisabled:currMods
+    })
+  }
+    
   }
 
   render() {
@@ -407,13 +435,14 @@ class TrackStats extends React.Component {
           />
       <Container>
       <ActionBar handleAction={this.handleAction}/>
+      <StyleButtons disabled={this.state.modDisabled} handleOnClick={this.handleStyle}></StyleButtons>
 
       <Possessions currentPossessions = {this.state.passes} prevPossessions={plays.reverse()} handleUndoClick={() => this.handleAction({action:'Undo'})}/>
       </Container>
       
-      {/* <Container>
-      <GameSummary m_players = {this.state.males} f_players = {this.state.females} possessions={this.state.play}></GameSummary> 
-      </Container> */}
+      <Container>
+      <GameSummary line={this.state.line} possessions={this.state.play}></GameSummary> 
+      </Container>
 
 
     </div>

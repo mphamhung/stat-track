@@ -3,7 +3,7 @@ import * as React from 'react';
 import {Stack, Container, Paper, Typography} from '@mui/material';
 
 const positiveActions = ["G", ]
-const otherActions = ["D","TA", "Drop", "Huck"];
+const otherActions = ["D","TA", "Drop"];
 const negativeActions = ["AG"];
 
 
