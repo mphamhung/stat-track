@@ -27,7 +27,7 @@ export default function StyleButtons(props) {
             <Stack 
                 direction='row'
                 spacing='9px'
-
+                mb={1}
                 >
                 {actions}
             </Stack>
