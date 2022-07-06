@@ -193,8 +193,14 @@ function GameSummary(props) {
 
       let styleTA = otherStats.map((action) => tempDict.get(action)).reduce((prev, curr) => prev+curr, 0)
       let styleThrows = styleStats.map((action) => tempDict.get(action)).reduce((prev, curr) => prev+curr, 0)
-      let styleSuccess =(1 - (styleTA/styleThrows)).toFixed(2)
+      var styleSuccess = 0
 
+      if(styleThrows) {
+        styleSuccess =(1 - (styleTA/styleThrows)).toFixed(2)
+
+      }
+
+      
 
       let salary = goalWeight*tempDict.get('G') + 
                 assistWeight* tempDict.get('assist') +
