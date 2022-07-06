@@ -307,16 +307,9 @@ function GameSummary(props) {
       </Table>
 
       <Button onClick={() => {
-          navigator.clipboard.writeText(
-            [Object.keys(rows[0]).join('\t')].concat(
-            
-            rows.map((row) => {
-              return Object.values(row).join('\t')
-            })
-            )
-            .join('\n'))
+          navigator.clipboard.writeText(window.location.href)
           }
-        }>Output to Clipboard</Button>
+        }>Copy Gamelink to Clipboard</Button>
 
     </TableContainer>
       );

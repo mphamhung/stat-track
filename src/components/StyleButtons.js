@@ -10,7 +10,6 @@ export default function StyleButtons(props) {
         props.handleOnClick(e,action)
     }
     const actions = ['Huck', 'Lefty', 'Hammer Scoobs', 'Layout'].map((action) => {
-        console.log(props.disabled.includes(action))
         return <Paper elevation='3' style = {{backgroundColor:(props.disabled.includes(action)) ? 'red':'grey', 
                         color:'white', height:'45px', width:'45px', 
                         display:'flex', alignItems: 'center', justifyContent: 'center',}}
