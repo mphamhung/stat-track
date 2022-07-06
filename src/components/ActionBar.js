@@ -41,8 +41,8 @@ export default function ActionBar(props) {
 
         >
         {otherActions.map((action) =>
-            <Paper elevation='3' style = {{backgroundColor:'gray', 
-            color:'white', height:'45px', width:'45px', 
+            <Paper elevation='3' style = {{backgroundColor:'#FFF280', 
+            color:'black', height:'45px', width:'45px', 
             display:'flex', alignItems: 'center', justifyContent: 'center',}}
             onClick={() => handleAction({action})}>
                 <Typography>
