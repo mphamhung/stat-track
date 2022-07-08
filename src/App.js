@@ -252,13 +252,13 @@ class TrackStats extends React.Component {
       headers: { "Content-Type": "application/json"},
       body: JSON.stringify({team_name, versus, date, possessions, uID, line})
     }).then((resp) => {
-        if (resp.status == 404) {
+        if (resp.status === 404) {
           fetch(db_url+"/games/", {
             method: 'POST',
             headers: { "Content-Type": "application/json"},
             body: JSON.stringify({team_name, versus, date, possessions, uID, line})
             })
-            
+
         }
     }
 
