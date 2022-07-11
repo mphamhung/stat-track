@@ -4,6 +4,10 @@ import {List, ListItem, ListItemButton,ListItemText, Divider} from '@mui/materia
 import {Menu}  from '@mui/icons-material';
 import React, { useEffect } from 'react'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+
+const db_url = "https://polydactyl-truthful-hyena.glitch.me"
+
+
 export default function TopBar(props) {
     
     const [searchParams] = useSearchParams() 
@@ -20,9 +24,11 @@ export default function TopBar(props) {
     const location = useLocation();
 
     const [color, setColor] = React.useState('grey')
-    // let text = (location.pathname === '/game/') ? `${home} vs ${away} ${date}` : "Create a New Game"
+    const [secondary, setSecondary] = React.useState('white')
 
+    // let text = (location.pathname === '/game/') ? `${home} vs ${away} ${date}` : "Create a New Game"
     useEffect( () => {
+        
         if (location.pathname === '/game/' || location.pathname === '/summary/') {
             // Fetch Team Color
             setColor('#6200EE')
@@ -35,18 +41,30 @@ export default function TopBar(props) {
         else if (location.pathname === '/feedback'){
             setText("Thanks for the feedback!")
         }
+        else if (location.pathname === '/team/'){
+            let id = searchParams.get('id')
+            fetch(db_url+"/teams/"+id)
+            .then(resp => resp.json())
+            .then( data => {  
+                setText(data.team_name)
+                setColor(data.primary_color)
+                setSecondary(data.secondary_color)
+            }
+        
+            )
+        }
         else {
             setColor('grey')
             setText("Create a New Game")
         }
 
-    }, [text, location.pathname, home, away, date])
+    }, [text, location.pathname, home, away, date, searchParams])
 
 
 
     return (
         <div id='topbar'>
-            <AppBar position="sticky" style={{lineHeight: '60px', backgroundColor:color}}>
+            <AppBar position="sticky" style={{lineHeight: '60px', backgroundColor:color, fontColor:secondary}}>
                 <Toolbar>
                     <IconButton
                         size="large"
