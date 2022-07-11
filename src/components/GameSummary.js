@@ -38,7 +38,7 @@ function GameSummary(props) {
     const [ascending, setAscending] = useState(true)   
 
     const stats = ['G', 'D', 'Drop', 'TA', 'assist', 'assist2']
-    const styleStats = ['Huck', 'Lefty', "Hammer Scoobs", "Layout"]
+    const styleStats = ['Huck', 'Lefty', "Upside Down", "Layout"]
     const otherStats = styleStats.map((stat)=> stat+' TA')
     const line = props.line
     const possessions = props.possessions
@@ -227,7 +227,7 @@ function GameSummary(props) {
         favTarget.get(name),
         tempDict.get('Huck'),
         tempDict.get('Lefty'),
-        tempDict.get('Hammer Scoobs'),
+        tempDict.get('Upside Down'),
         tempDict.get('Layout')
       ))
     }

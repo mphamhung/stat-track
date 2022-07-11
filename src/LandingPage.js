@@ -19,6 +19,11 @@ function LandingPage(props) {
     // const [uID, setUID] = useState(0)
 
     const [hasFetched, setHasFetched] = useState(false)
+    // const [error, setError] = useState('Something is wrong')
+
+    const [teamList, setTeamList] = useState('')
+    const [teamsHasFetched, setTeamsHasFetched] = useState(false)
+
 
     const navigate  = useNavigate ();
     
@@ -38,8 +43,15 @@ function LandingPage(props) {
                 method: 'POST',
                 headers: { "Content-Type": "application/json"},
                 body: JSON.stringify({team_name, versus, date, possessions, uID})
-                }).then(
-                    navigate("/game/?home="+home+"&versus="+away+"&date="+dateId+"&uID="+uID)
+                }).then( (resp) => {
+                    if (resp.status ===200) {
+                        navigate("/game/?home="+home+"&versus="+away+"&date="+dateId+"&uID="+uID)
+                    }
+                    else {
+                        // setError('Something went wrong generating the game')
+                    }
+
+                }
             )
         })
     }
@@ -89,11 +101,36 @@ function LandingPage(props) {
             setGameList(gameList)
 
             setHasFetched(true)
-    
-        }
-    
+            }
         )
+
+        fetch(db_url+"/teams")
+        .then(resp => resp.json())
+        .then(data => {
+            let teams = data.map( team=> {
+                let query = "?id="+team.id
+            return (
+                <Box direction='row' 
+                justifyItems='space-between' 
+                style={{
+                maxHeight:"50px", minHeight:"50px"}} 
+                onClick={( ) => navigate('team/'+query)}
+                >
+                        <Typography>
+                            {team.team_name}
+                        </Typography>                    
+                </Box>
+            )
+            })
+            
+            setTeamList(teams)
+            setTeamsHasFetched(true)
+        })
     }, [navigate])
+
+    useEffect( () => {
+        console.log(teamList)
+    }, [teamList])
 
     return (
         <div>
@@ -125,12 +162,25 @@ function LandingPage(props) {
             />
             </ButtonGroup>
             </Box>
-            
+            <Stack direction='row' justifyItems='space-between'>
             <Button size='small' color='primary' variant='contained' onClick={e => handleSubmit(e)} style={{width:'128px',height:'45px', backgroundColor:'#6200EE'}} >                
                     Start Game
-            </Button>
+            </Button>  
+            <Box>
+
+            </Box>
+            </Stack>
+            
+            
             </Stack>
         </Container>
+        <Container>
+            <Typography>
+                <h4>See other teams that are using our app!</h4>
+            </Typography>
+            {teamsHasFetched && teamList}
+        </Container>
+
             
         <Container>
             <Typography>
