@@ -2,7 +2,7 @@ import '../App.css';
 import {Button, Box} from '@mui/material';
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 
 const padding = 0.2
 
@@ -15,62 +15,19 @@ function PlayerButton(props) {
     let color = ((props.player.gender === "M" ) ? 'primary' : 'secondary')
     let gender = props.player.gender
 
-    const [selected, setSelected] = useState(false)
-
-    const diff = useRef({x:null, y:null})
     function handleOnClick(){
       func({name, id, gender})
     }
 
 
-    useEffect( () => {
-      console.log(selected)
-
-    }, [selected])
-    
-    function handleOnMouseDown(e) {
-      
-      // console.log(e.nativeEvent.clientX)
-      setSelected(true)
-      
-    }
-    function handleOnMouseUp(e) {
-
-      setSelected(false)
-    }
-
-    function handleOnTouchStart(e) {
-      
-      diff.current = {
-        x: e.changedTouches[0].clientX,
-        y: e.changedTouches[0].clientY
-      }
-
-      setSelected(true)
-      
-    }
-    function handleOnTouchEnd(e) {
-
-      diff.current = {
-        x: diff.current.x-e.changedTouches[0].clientX,
-        y: diff.current.y-e.changedTouches[0].clientY
-
-      }
-      console.log(diff)
-
-      setSelected(false)
-    }
-
     const handlers={
       onClick: handleOnClick,
-      onMouseDown: handleOnMouseDown,
-      onMouseUp: handleOnMouseUp,
-      onTouchStart: handleOnTouchStart,
-      onTouchEnd: handleOnTouchEnd,
+      // onMouseDown: handleOnMouseDown,
+      // onMouseUp: handleOnMouseUp,
   }
 
     return (
-      <Box m={padding} style={{position:'relative'}}>
+      <Box m={padding}>
           <Button  
                   variant="contained" fullWidth 
                   color={color} 
@@ -82,15 +39,6 @@ function PlayerButton(props) {
                   >
                   {name}
             </Button>
-            {selected ?
-            <div>
-              <Button style={{position:'absolute', left:-50, zIndex:100}}>
-              Test
-            </Button>
-            </div>
-             :
-            ''
-            }
 
       </Box>
     )
