@@ -38,7 +38,7 @@ const db_url = "https://polydactyl-truthful-hyena.glitch.me"
                         justifyItems='space-between' 
                         style={{backgroundColor: i%2 ? '#EEEEEE': 'white',
                         maxHeight:"50px", minHeight:"50px"}} 
-                        onClick={( ) => navigate('summary/'+query)}
+                        onClick={( ) => navigate('/summary/'+query)}
                         >
             
                             <Typography style={{maxWidth:"80px", minWidth:"80px", maxHeight:"60px", minHeight:"60px",
