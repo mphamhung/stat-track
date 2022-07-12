@@ -44,15 +44,15 @@ function LandingPage(props) {
                 headers: { "Content-Type": "application/json"},
                 body: JSON.stringify({team_name, versus, date, possessions, uID})
                 }).then( (resp) => {
-                    if (resp.status ===200) {
+
+                    if (resp.ok) {
                         navigate("/game/?home="+home+"&versus="+away+"&date="+dateId+"&uID="+uID)
                     }
                     else {
-                        // setError('Something went wrong generating the game')
+                        throw "Error"
                     }
 
-                }
-            )
+                })
         })
     }
 
