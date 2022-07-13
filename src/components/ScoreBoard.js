@@ -25,7 +25,7 @@ function ScoreBoard(props) {
 
     <Container>
     <Stack direction='row' justifyContent="space-between" mt={1} mb={1}>
-      <Paper elevation='0' style={{display:'flex', alignItems: 'center', justifyContent: 'center', }}>
+      <Paper elevation={0} style={{display:'flex', alignItems: 'center', justifyContent: 'center', }}>
       {isFinal ? 
           <Typography >
           Final Score:
@@ -41,7 +41,7 @@ function ScoreBoard(props) {
         direction = "row"
         spacing = '5px'
         >
-        <Paper  elevation='0' style={{backgroundColor: '#257300', color:'white', 
+        <Paper  elevation={0}  style={{backgroundColor: '#257300', color:'white', 
                                     width: '38px', height:'38px', display:'flex', borderRadius:'100%',
                                   alignItems: 'center', justifyContent: 'center', }}>
         <Typography >
@@ -49,7 +49,7 @@ function ScoreBoard(props) {
         </Typography>
 
         </Paper>
-        <Paper elevation='0' style={{backgroundColor: '#AF0000', color:'white',
+        <Paper elevation={0}  style={{backgroundColor: '#AF0000', color:'white',
                                     width: '38px', height:'38px', display:'flex', borderRadius:'100%',
                                     alignItems: 'center', justifyContent: 'center',}}>
         <Typography>
@@ -57,7 +57,7 @@ function ScoreBoard(props) {
         </Typography>        
         </Paper>
         </Stack>
-      <Paper elevation='0' style={{display:'flex', alignItems: 'center', justifyContent: 'center',}}>
+      <Paper elevation={0}  style={{display:'flex', alignItems: 'center', justifyContent: 'center',}}>
 
       {(diff > 0) ? <SentimentVerySatisfied fontSize="large"/> : <MoodBad fontSize="large"/>}
       </Paper>

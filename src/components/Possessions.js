@@ -28,8 +28,8 @@ export default function Possesions(props) {
         <Paper style={{maxHeight: 200, overflow: 'auto'}}>
 
         {
-        prevPossessions.map((e) => {
-        return <Possession play={e}/>
+        prevPossessions.map((e, idx) => {
+        return <Possession key={idx} play={e}/>
         })}
 
         </Paper>
