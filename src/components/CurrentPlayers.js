@@ -10,11 +10,11 @@ export default function CurrentPlayers(props) {
     let line = props.line
     let disabled = props.disabled
 
-    const m_line = line.filter((player)=> player.gender ==="M").map((player) => <PlayerButton player ={player} onClick={handlePlayerClick} isDisabled={(disabled === player.name)}></PlayerButton>)
-    const f_line = line.filter((player)=> player.gender ==="F").map((player) => <PlayerButton player ={player} onClick={handlePlayerClick} isDisabled={(disabled === player.name)}></PlayerButton>)
+    const m_line = line.filter((player)=> player.gender ==="M").map((player, idx) => <PlayerButton key={idx} player ={player} onClick={handlePlayerClick} isDisabled={(disabled === player.name)}></PlayerButton>)
+    const f_line = line.filter((player)=> player.gender ==="F").map((player, idx) => <PlayerButton key={idx} player ={player} onClick={handlePlayerClick} isDisabled={(disabled === player.name)}></PlayerButton>)
     
     return (
-        <Paper elevation='0' style={{minHeight: 200, overflow: 'auto',}}>
+        <Paper elevation={0} style={{minHeight: 200, overflow: 'auto',}}>
             
                     <Container >
                     <Container >

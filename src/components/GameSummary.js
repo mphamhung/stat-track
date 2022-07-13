@@ -10,6 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
 import React, { useState } from 'react'
+import { Container } from '@mui/system';
 
 function createData(
     name: string,
@@ -247,6 +248,8 @@ function GameSummary(props) {
           })
     
     return (
+      <Container>
+
       <TableContainer component={Paper}>
       <Table  sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead style={{backgroundColor:'#D9D9D9'}}>
@@ -311,13 +314,13 @@ function GameSummary(props) {
           ))}
         </TableBody>
       </Table>
-
-      <Button onClick={() => {
-          navigator.clipboard.writeText(window.location.href)
-          }
-        }>Copy Gamelink to Clipboard</Button>
-
     </TableContainer>
+    <Button onClick={() => {
+      navigator.clipboard.writeText(window.location.href)
+      }
+    }>Copy Gamelink to Clipboard</Button>
+    </Container>
+
       );
   }
   

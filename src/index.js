@@ -23,7 +23,6 @@ root.render(
         <Route path='summary' element={<SummaryPage/>}/>
         <Route path='feedback' element={<FeedbackPage />}/>
         <Route path='team' element={<TeamPage />} />
-
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

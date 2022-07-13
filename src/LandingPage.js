@@ -48,10 +48,6 @@ function LandingPage(props) {
                     if (resp.ok) {
                         navigate("/game/?home="+home+"&versus="+away+"&date="+dateId+"&uID="+uID)
                     }
-                    else {
-                        throw "Error"
-                    }
-
                 })
         })
     }

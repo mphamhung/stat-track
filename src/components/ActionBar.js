@@ -21,11 +21,12 @@ export default function ActionBar(props) {
         spacing='9px'
 
         >
-        {positiveActions.map((action) =>
-            <Paper elevation='3' style = {{backgroundColor:'#257300', 
+        {positiveActions.map((action, idx) =>
+            <Paper elevation={3} style = {{backgroundColor:'#257300', 
                             color:'white', height:'45px', width:'45px', 
                             display:'flex', alignItems: 'center', justifyContent: 'center',}}
-                            onClick={() => handleAction({action})}>
+                            onClick={() => handleAction({action})}
+                            key={idx}>
                 <Typography>
                     {action}
                 </Typography>
@@ -40,11 +41,12 @@ export default function ActionBar(props) {
         spacing='9px'
 
         >
-        {otherActions.map((action) =>
-            <Paper elevation='3' style = {{backgroundColor:'#FFF280', 
+        {otherActions.map((action, idx) =>
+            <Paper elevation={3} style = {{backgroundColor:'#FFF280', 
             color:'black', height:'45px', width:'45px', 
             display:'flex', alignItems: 'center', justifyContent: 'center',}}
-            onClick={() => handleAction({action})}>
+            onClick={() => handleAction({action})}
+            key={idx}>
                 <Typography>
                     {action}
                 </Typography>
@@ -59,11 +61,12 @@ export default function ActionBar(props) {
         spacing='9px'
 
         >
-        {negativeActions.map((action) =>
-            <Paper elevation='3'  style = {{backgroundColor:'#AF0000', 
+        {negativeActions.map((action, idx) =>
+            <Paper elevation={3}  style = {{backgroundColor:'#AF0000', 
             color:'white', height:'45px', width:'45px', 
             display:'flex', alignItems: 'center', justifyContent: 'center',}}
-            onClick={() => handleAction({action})}>
+            onClick={() => handleAction({action})}
+            key={idx}>
                 <Typography>
                     {action}
                 </Typography>
