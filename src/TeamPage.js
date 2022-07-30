@@ -32,6 +32,16 @@ const db_url = "https://polydactyl-truthful-hyena.glitch.me"
             let i = 0
             let games = data.filter(game => (game.team_name === team_name && game.versus !== 'default')).map(game => {
                 let query = "?home="+game.team_name+"&versus="+game.versus+"&date="+game.date+"&uID="+game.uID
+                let plays = game.possessions.slice()
+                let home = plays.reduce((total, play) => {
+                    let toAdd = (play[play.length - 1] === "G") ? 1 : 0
+                    return total + toAdd
+                  }, 0)
+                let away = plays.reduce((total, play) => {
+                    let toAdd = (play[play.length - 1] === "AG") ? 1 : 0
+                return total + toAdd
+                }, 0)
+
                 i += 1
                     return (
                         <Stack direction='row' 
@@ -57,7 +67,7 @@ const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 
                             <Typography style={{maxWidth:"80px", minWidth:"80px", maxHeight:"60px", minHeight:"60px",
                                 }}>
-                                {game.uID}  
+                                {home} : {away} 
                             </Typography>
                             
                         </Stack>
@@ -100,7 +110,7 @@ const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 
                             <Typography style={{maxWidth:"80px", minWidth:"80px", maxHeight:"60px", minHeight:"60px",
                                 }}>
-                                Game  
+                                Score  
                             </Typography>
                             
                         </Stack>
