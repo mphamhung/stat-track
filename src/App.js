@@ -107,13 +107,21 @@ function App(prop) {
 
     if (currentPossessionTmp.length > 0 && props.action === "Undo") {
       currentPossessionTmp.pop()
+      if (currentPossessionTmp.length>=1) {
+        if (currentPossessionTmp[currentPossessionTmp.length-1].split('+').length > 1) {
+          let [tmpPlayer, tmpMods] = currentPossessionTmp[currentPossessionTmp.length-1].split('+')
+          setCurrSelected(tmpPlayer)
+          setCurrMods(tmpMods)
+        }
+        else{
+          setCurrSelected(currentPossessionTmp[currentPossessionTmp.length-1])
+          setCurrMods([])
 
-      if (currentPossessionTmp[currentPossessionTmp.length-1].split('+').length > 1 ) {
-        setCurrSelected(currentPossessionTmp[currentPossessionTmp.length-1].split('+')[0])
+        }
       }
-      else{
-        setCurrSelected(currentPossessionTmp[currentPossessionTmp.length-1])
-
+      else {
+        setCurrSelected('')
+        setCurrMods([])
       }
       setCurrentPossession(currentPossessionTmp)
     }
