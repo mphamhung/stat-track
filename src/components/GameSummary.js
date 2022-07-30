@@ -48,6 +48,7 @@ function GameSummary(props) {
 
     const handleSort=(prop)=>
     {
+      console.log(prop)
       if (prop === sortKey){
         setAscending(!ascending)
       }
@@ -264,7 +265,7 @@ function GameSummary(props) {
             <TableCell align="right" onClick={() => handleSort('throws')}>Throws</TableCell>
             <TableCell align="right" onClick={() => handleSort('taPerc')}>Pass %</TableCell>
             {styleStats.map((action) => {
-                return <TableCell align="right" onClick={() => handleSort('action')}>{action}</TableCell>
+                return <TableCell align="right" onClick={() => handleSort(action)}>{action}</TableCell>
             })}
             <Tooltip title={"Computed by: " + 
             goalWeight +"*Gs +"+

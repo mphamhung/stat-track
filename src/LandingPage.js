@@ -60,6 +60,19 @@ function LandingPage(props) {
             let i = 0
             let gameList = data.filter(game => game.versus !== 'default').map(game => {
                 let query = "?home="+game.team_name+"&versus="+game.versus+"&date="+game.date+"&uID="+game.uID
+
+                let plays = game.possessions.slice()
+                let home = plays.reduce((total, play) => {
+                    let toAdd = (play[play.length - 1] === "G") ? 1 : 0
+                    return total + toAdd
+                  }, 0)
+                let away = plays.reduce((total, play) => {
+                    let toAdd = (play[play.length - 1] === "AG") ? 1 : 0
+                return total + toAdd
+                }, 0)
+                
+                
+
                 i += 1
                     return (
                         <Stack direction='row' 
@@ -85,7 +98,7 @@ function LandingPage(props) {
 
                             <Typography style={{maxWidth:"80px", minWidth:"80px", maxHeight:"60px", minHeight:"60px",
                                 }}>
-                                {game.uID}  
+                                {home} : {away}  
                             </Typography>
                             
                         </Stack>
@@ -201,7 +214,7 @@ function LandingPage(props) {
 
                             <Typography style={{maxWidth:"80px", minWidth:"80px", maxHeight:"60px", minHeight:"60px",
                                 }}>
-                                Game  
+                                Score  
                             </Typography>
                             
                         </Stack>
