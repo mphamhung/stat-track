@@ -50,7 +50,7 @@ function LandingPage(props) {
         .then(resp => resp.json())
         .then( data => {
             let i = 0
-            let gameList = data.filter(game => game.versus !== 'default').map(game => {
+            let gameList = data.filter(game => game.versus !== 'default').reverse().map(game => {
                 let query = "?home="+game.team_name+"&versus="+game.versus+"&date="+game.date+"&uID="+game.uID
                 i += 1
                     return (
