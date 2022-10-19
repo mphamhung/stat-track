@@ -10,6 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
 import React, { useState } from 'react'
+import { Container } from '@mui/system';
 
 function createData(
     name: string,
@@ -38,7 +39,7 @@ function GameSummary(props) {
     const [ascending, setAscending] = useState(true)   
 
     const stats = ['G', 'D', 'Drop', 'TA', 'assist', 'assist2']
-    const styleStats = ['Huck', 'Lefty', "Hammer Scoobs", "Layout"]
+    const styleStats = ['Huck', 'Lefty', "Upside Down", "Layout"]
     const otherStats = styleStats.map((stat)=> stat+' TA')
     const line = props.line
     const possessions = props.possessions
@@ -227,7 +228,7 @@ function GameSummary(props) {
         favTarget.get(name),
         tempDict.get('Huck'),
         tempDict.get('Lefty'),
-        tempDict.get('Hammer Scoobs'),
+        tempDict.get('Upside Down'),
         tempDict.get('Layout')
       ))
     }
@@ -247,6 +248,8 @@ function GameSummary(props) {
           })
     
     return (
+      <Container>
+
       <TableContainer component={Paper}>
       <Table  sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead style={{backgroundColor:'#D9D9D9'}}>
@@ -261,7 +264,7 @@ function GameSummary(props) {
             <TableCell align="right" onClick={() => handleSort('throws')}>Throws</TableCell>
             <TableCell align="right" onClick={() => handleSort('taPerc')}>Pass %</TableCell>
             {styleStats.map((action) => {
-                return <TableCell align="right" onClick={() => handleSort('action')}>{action}</TableCell>
+                return <TableCell align="right" onClick={() => handleSort(action)}>{action}</TableCell>
             })}
             <Tooltip title={"Computed by: " + 
             goalWeight +"*Gs +"+
@@ -311,13 +314,13 @@ function GameSummary(props) {
           ))}
         </TableBody>
       </Table>
-
-      <Button onClick={() => {
-          navigator.clipboard.writeText(window.location.href)
-          }
-        }>Copy Gamelink to Clipboard</Button>
-
     </TableContainer>
+    <Button onClick={() => {
+      navigator.clipboard.writeText(window.location.href)
+      }
+    }>Copy Gamelink to Clipboard</Button>
+    </Container>
+
       );
   }
   

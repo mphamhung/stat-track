@@ -1,7 +1,7 @@
 
 import RosterButton from './RosterButton'
 import {ButtonGroup, Container, Button, Paper, Stack, Typography, Divider, TextField, ToggleButton, ToggleButtonGroup} from '@mui/material'
-import { useEffect,useState} from "react"
+import { useEffect,useState,useRef} from "react"
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import CheckIcon from '@mui/icons-material/Check';
@@ -21,7 +21,7 @@ export default function Roster(props) {
 
     const [name, setName] = useState("")
     const [gender, setGender] = useState("M")
-    const [males,setMales] = useState([])
+    const [males, setMales] = useState([])
     const [females,setFemales] = useState([])
 
     const [hasFetched, setHasFetched] = useState(false)
@@ -30,15 +30,30 @@ export default function Roster(props) {
     // const handleSubmit = (e) => {
     const [allSelected, setAllSelected] = useState(false)
 
-    const [editTriggered, setEditTriggered] = useState(false)
+    const test = useRef(false);
+
     const handleEditClick = (props) => {
       // let name = props.name
       let id = props.id
       // let gender = props.gender
       fetch(db_url+"/players/"+id, {
         method: 'DELETE',
-      })
-      setEditTriggered(!editTriggered)
+      }).then(resp => {
+
+        if (resp.ok) {
+          if (props.gender === "M") {
+            let malesTmp = males.slice().filter(player => player.id !== id)
+            setMales(malesTmp)
+          }
+          else if (props.gender === "F") {
+            let femalesTmp = females.slice().filter(player => player.id !== id)
+            setFemales(femalesTmp)
+          }
+        }
+      }
+
+      )
+
     }
 
     const onClearClick = (props) => {
@@ -75,6 +90,7 @@ export default function Roster(props) {
     const onSaveClick_ = (props) => {
       onSaveClick(props)
     }
+
     const handlePlayerClick = (props) => {
         // console.log(props)
         if (!editMode) {
@@ -141,16 +157,16 @@ export default function Roster(props) {
         )
         setFemales(players)
       })
-    }, [line, team, editTriggered])
+    }, [line, team])
 
 
     useEffect( () => {
         if (males.length>0 && females.length>0) {
             setHasFetched(true)
-
         }
 
     }, [males, females])
+
 
     const handleSubmit = (props) => {
         let team_name = team
@@ -160,6 +176,42 @@ export default function Roster(props) {
             method: 'POST',
             headers: { "Content-Type": "application/json"},
             body: JSON.stringify({name, gender, team_name})
+          }).then(resp => {
+            console.log(resp)
+            test.current = !test.current
+          }).finally(resp => {
+            fetch(db_url+"/players?gender=M&team_name="+team+"&_sort=name")
+      .then(resp => resp.json())
+      .then (data => {
+        let players = data.map((player) => {
+
+        let status = false
+          for (let i=0; i< line.length; i++) {
+            if (line[i].name === player.name) {
+                status = true
+            }
+        }
+          return  {name:player.name, gender:player.gender, id: player.id, status: status}
+        }
+        )
+        setMales(players)
+      })
+      fetch(db_url+"/players?gender=F&_sort=name&team_name="+team)
+      .then(resp => resp.json())
+      .then (data => {
+        let players = data.map((player) => {
+          let status = false
+          for (let i=0; i< line.length; i++) {
+            if (line[i].name === player.name) {
+                status = true
+            }
+        }
+
+          return {name:player.name, gender:player.gender, id: player.id, status: status}
+        }
+        )
+        setFemales(players)
+      })
           })
         }
       
