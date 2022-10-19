@@ -13,7 +13,6 @@ import FeedbackPage from './FeedbackPage';
 import TeamPage from './TeamPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
     <BrowserRouter>
       <TopBar/>
       <Routes path="/" >
@@ -25,7 +24,6 @@ root.render(
         <Route path='team' element={<TeamPage />} />
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

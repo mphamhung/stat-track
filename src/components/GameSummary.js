@@ -48,7 +48,6 @@ function GameSummary(props) {
 
     const handleSort=(prop)=>
     {
-      console.log(prop)
       if (prop === sortKey){
         setAscending(!ascending)
       }
