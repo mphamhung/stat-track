@@ -11,7 +11,7 @@ import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
 import React, { useState } from 'react'
 import { Container } from '@mui/system';
-
+import {Typography} from '@mui/material'
 function createData(
     name: string,
     throws: number,
@@ -43,6 +43,11 @@ function GameSummary(props) {
     const otherStats = styleStats.map((stat)=> stat+' TA')
     const line = props.line
     const possessions = props.possessions
+
+    const genders = new Map(
+      line.map((player) => {
+         return [player.name, player.gender]})
+    )
 
     const [highlight, setHighlight] = useState("")    
 
@@ -90,6 +95,7 @@ function GameSummary(props) {
       )]
       })
     )
+    
 
     possessions.slice().map((e) => {
 
@@ -180,15 +186,17 @@ function GameSummary(props) {
     const TAWeight = -5000;
     const passWeight = 500;
 
-    const styleWeight = 2500*styleStats.length
+    const styleWeight = 0*styleStats.length
     const rows = []
 
+    const genderPos = {"M":0, "F":0}
     for (const [name,tempDict] of passedTo.entries()) {
       let totalThrows = line.map((player) => {
         return tempDict.get(player.name)
       }).concat(tempDict.get('TA')).reduce((prev, curr) => prev+curr, 0)
 
-
+      genderPos[genders.get(name)] += totalThrows + tempDict.get('G')
+    
       let taPerc = (1-(tempDict.get('TA')/totalThrows)).toFixed(2)
 
 
@@ -200,8 +208,6 @@ function GameSummary(props) {
         styleSuccess =(1 - (styleTA/styleThrows)).toFixed(2)
 
       }
-
-      
 
       let salary = goalWeight*tempDict.get('G') + 
                 assistWeight* tempDict.get('assist') +
@@ -232,7 +238,6 @@ function GameSummary(props) {
         tempDict.get('Layout')
       ))
     }
-
     rows.sort((a,b) => 
           {
             if (isNaN(a[sortKey])) {
@@ -315,6 +320,13 @@ function GameSummary(props) {
         </TableBody>
       </Table>
     </TableContainer>
+
+    <Typography >
+          Other Stats: 
+    </Typography>
+    <Typography>
+              Possessions {(genderPos["M"]/(genderPos["M"] + genderPos["F"])).toFixed(2)*100}% M,  {(genderPos["F"]/(genderPos["M"] + genderPos["F"])).toFixed(2)*100}% F
+    </Typography>
     <Button onClick={() => {
       navigator.clipboard.writeText(window.location.href)
       }
