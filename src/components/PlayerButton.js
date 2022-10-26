@@ -1,9 +1,9 @@
 import '../App.css';
-import {Box} from '@mui/material';
+import {Button, Box} from '@mui/material';
 // import ButtonGroup from '@mui/material/ButtonGroup';
 // import Alert from '@mui/material/Alert';
 import React from 'react'
-import HapticButton from 'react-haptic-button';
+
 const padding = 0.2
 
 function PlayerButton(props) {
@@ -28,9 +28,7 @@ function PlayerButton(props) {
 
     return (
       <Box m={padding}>
-          <HapticButton  
-                  isHapticFeedbackEnabled={true}
-                  hapticFeedbackDuration={100}
+          <Button  
                   variant="contained" fullWidth 
                   color={color} 
                   name={id} 
@@ -40,7 +38,7 @@ function PlayerButton(props) {
                   {... handlers}
                   >
                   {name}
-            </HapticButton>
+            </Button>
 
       </Box>
     )
