@@ -16,7 +16,7 @@ const buttonJSS = {
           transform: "translateY(0)"
       },
       "50%": {
-          transform: "translateY(5px)"
+          transform: "translateY(2px)"
       }
   }
 };
