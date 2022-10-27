@@ -12,6 +12,17 @@ import Tooltip from '@mui/material/Tooltip';
 import React, { useState } from 'react'
 import { Container } from '@mui/system';
 import {Typography} from '@mui/material'
+
+const goalWeight = 5000;
+const assistWeight = 5000;
+const assist2Weight = 3000;
+const DWeight = 5000;
+const DropWeight = -3000;
+const TAWeight = -3500;
+const passWeight = 500;
+
+const styleWeight = 0*styleStats.length
+
 function createData(
     name: string,
     throws: number,
@@ -178,15 +189,7 @@ function GameSummary(props) {
       }
     }
 
-    const goalWeight = 5000;
-    const assistWeight = 5000;
-    const assist2Weight = 3000;
-    const DWeight = 5000;
-    const DropWeight = -5000;
-    const TAWeight = -5000;
-    const passWeight = 500;
 
-    const styleWeight = 0*styleStats.length
     const rows = []
 
     const genderPos = {"M":0, "F":0}
