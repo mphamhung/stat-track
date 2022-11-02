@@ -16,6 +16,9 @@ export default function SummaryPage (props) {
     const [possessions_prev, setPossessionsPrev] = useState([])
     const [searchParams] = useSearchParams() 
     let home = searchParams.get('home')
+    let away = searchParams.get('versus')
+    let uID = searchParams.get('uID')
+    let date = searchParams.get('date')
 
     const [page, setPage] = useState(0)
     const [line, setLine] = useState([]) 
@@ -49,11 +52,13 @@ export default function SummaryPage (props) {
         .then(resp => resp.json())
         .then(data => {
           console.log(data)
+          
           if (data.length && data.length>1){
-                  
-            let possessions = data[data.length-2].possessions
-            let line = data[data.length-2].line
-            // console.log(possessions)
+            for (var i = 0; i<data.length; i++){
+              if (data[i].versus ===away && data[i].uID ===uID && data[i].date === date) break
+            }
+            let possessions = data[i-1].possessions
+            let line = data[i-1].line
             if (line){
               setLinePrev(line)
             }
@@ -63,7 +68,7 @@ export default function SummaryPage (props) {
     
           
         })
-    }, [location.search, home])
+    }, [location.search, home, away, date, uID])
     
     return  <Container>
       <Tabs
