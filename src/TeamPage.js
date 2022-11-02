@@ -30,7 +30,7 @@ const db_url = "https://polydactyl-truthful-hyena.glitch.me"
         .then(resp => resp.json())
         .then( data => {
             let i = 0
-            let games = data.filter(game => (game.team_name === team_name && game.versus !== 'default')).map(game => {
+            let games = data.reverse().filter(game => (game.team_name === team_name && game.versus !== 'default')).map(game => {
                 let query = "?home="+game.team_name+"&versus="+game.versus+"&date="+game.date+"&uID="+game.uID
                 let plays = game.possessions.slice()
                 let home = plays.reduce((total, play) => {
