@@ -19,6 +19,8 @@ export default function SummaryPage (props) {
 
     const [page, setPage] = useState(0)
     const [line, setLine] = useState([]) 
+    const [line_prev, setLinePrev] = useState([]) 
+
     useEffect( () => {
         fetch(db_url+"/games" + location.search)
         .then(resp => resp.json())
@@ -50,6 +52,11 @@ export default function SummaryPage (props) {
           if (data.length && data.length>1){
                   
             let possessions = data[data.length-2].possessions
+            let line = data[data.length-2].line
+            // console.log(possessions)
+            if (line){
+              setLinePrev(line)
+            }
             setPossessionsPrev(possessions)
 
           }
@@ -75,7 +82,7 @@ export default function SummaryPage (props) {
         </div>
       }
       {(page ===1 ) &&
-        <GameSummaryDiff line={line} possessions={possessions} possessions_prev={possessions_prev}></GameSummaryDiff> 
+        <GameSummaryDiff line={line} line_prev={line_prev} possessions={possessions} possessions_prev={possessions_prev}></GameSummaryDiff> 
       }
         </Container>
 }

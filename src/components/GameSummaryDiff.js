@@ -23,11 +23,16 @@ export default function GameSummaryDiff(props) {
 
     const styleStats = ['Huck', 'Lefty', "Upside Down", "Layout"]
     const line = props.line
+    const line_prev = props.line_prev
     const possessions = props.possessions
     const possessions_prev = props.possessions_prev
-    let process_curr = process(line, possessions)
+
+    const common_line = line.filter(function(n) {
+      return line_prev.map((row)=> row.id === n.id).filter((k)=> k).length>0
+    });
+    let process_curr = process(common_line, possessions)
     let rows_curr = process_curr[0]
-    let process_prev = process(line, possessions_prev)
+    let process_prev = process(common_line, possessions_prev)
     let rows_prev = process_prev[0]
     let rows = rows_curr.map((row, i) => {
         let r = new Map (
