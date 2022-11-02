@@ -21,7 +21,7 @@ const DropWeight = -3000;
 const TAWeight = -3500;
 const passWeight = 500;
 
-const styleWeight = 0*styleStats.length
+const styleWeight = 0
 
 function createData(
     name: string,
@@ -38,30 +38,208 @@ function createData(
     huck: number,
     lefty: number,
     hammerscoob: number,
-    layout
+    layout:number,
+    gender_perc: number,
+    pickups: number
   ) {
-    return { name, throws, goals, assists, ds, tas, drops, taPerc, assists2, value, favTarget, huck, lefty, hammerscoob, layout };
+    return { name, throws, goals, assists, ds, tas, drops, taPerc, assists2, value, favTarget, huck, lefty, hammerscoob, layout, gender_perc, pickups };
   }
   
+function process(line, possessions) {
+    const stats = ['G', 'D', 'Drop', 'TA', 'assist', 'assist2', 'pickups']
+    const styleStats = ['Huck', 'Lefty', "Upside Down", "Layout"]
+    const otherStats = styleStats.map((stat)=> stat+' TA')
+    const genders = new Map(
+        line.map((player) => {
+           return [player.name, player.gender]})
+      )
+     
+    
+      const passedTo = new Map(
+        line.map((player) => {
+           return [player.name, new Map(
+            line.map((player) => {
+               return [player.name,0]
+            }).concat(
+              stats.map((stat) => {
+                return [stat,0]
+             })
+            ).concat(
+              styleStats.map((stat) => {
+                return [stat,0]
+             })
+            ).concat(
+              otherStats.map((stat) => {
+                return [stat,0]
+             })
+            )
+        )]
+        })
+      )
+      
+  
+      possessions.slice().map((e) => {
+  
+        if (e[e.length-1] === "G") {
+            if (e.length>2) {
+            let [person ]  = e[e.length-3].split('+')
+            if (passedTo.has(person)) {
+              let tempDict = passedTo.get(person)
+              tempDict.set('assist', tempDict.get('assist')+1)
+            }
+          }
+          if (e.length>3) {
+          let [person2, ] = e[e.length-4].split('+')
+          if (passedTo.has(person2)) {
+            let tempDict = passedTo.get(person2)
+            tempDict.set('assist2', tempDict.get('assist2')+1)
+          }
+        }
+        
+        }
+          for (let i=0; i<e.length; i++) {
+            let [person, actions] = e[i].split('+')
+            
+            if (passedTo.has(person)){
+              let tempDict = passedTo.get(person)
+              if (tempDict.has(e[i+1])) {
+                tempDict.set(e[i+1], tempDict.get(e[i+1])+1)
+              }
+              if (actions){
+                let actions_ = actions.split('/')
+                for (let k=0; k<actions_.length; k++)  {
+                  let action = actions_[k]
+  
+                    tempDict.set(action, tempDict.get(action)+1)
+  
+                  //Check if throwaway
+                  let [next_person] = e[i+1].split('+')
+                  if (next_person ==='TA') {
+                    tempDict.set(action+' TA', tempDict.get(action+' TA')+1)
+                  }
+                }
+                
+              }
+              if (e[e.length-1] !== "AG" && e[e.length-1] !== "D" && i === 0){
+                tempDict.set('pickups', tempDict.get('pickups')+1)
+              }
+            }
+
+          }
+          return 0;
+    
+        })
+      const favTarget = new Map(
+        line.map((player) => {
+          return [player.name,'']
+        })
+      )
+      const genderPerc = new Map(
+        line.map((player) => {
+          return [player.name,0]
+        })
+      )
+      const filterOut = (array, target) => array.filter(element => element[1] === target);
+      
+      var passes = []
+      for (const [name, map] of passedTo.entries()) {
+        passes = []
+        for (const [name, value] of map.entries()) {
+          if (stats.includes(name)) {
+            continue
+          }
+          if (styleStats.includes(name)) {
+            continue
+          }
+          if (otherStats.includes(name)) {
+            continue
+          }
+          passes.push([name, value])
+        }
+        
+        passes.sort((a,b) =>  b[1] -a[1])
+        
+        if (passes[0][1] !== 0 && passes[0][1] !== passes[1][1]) {
+          favTarget.set(name, passes[0][0] + ' ' + passes[0][1])
+        }      
+        else if (passes[0][1] !== 0) {     
+          favTarget.set(name, filterOut(passes, passes[0][1]) 
+          .map((e) => e[0]).join('|') + ' '+ passes[0][1])
+        }
+
+        let p_to_m = passes.filter((item) => genders.get(item[0]) === 'M' ).reduce((total, num) => {return total+num[1]}, 0)
+        let p_to_f = passes.filter((item) => genders.get(item[0]) === 'F' ).reduce((total, num) => {return total+num[1]}, 0)
+        genderPerc.set(name, p_to_f/(p_to_m+ p_to_f))
+      }
+      const rows = []
+
+      const genderPos = {"M":0, "F":0}
+      for (const [name,tempDict] of passedTo.entries()) {
+        let totalThrows = line.map((player) => {
+          return tempDict.get(player.name)
+        }).concat(tempDict.get('TA')).reduce((prev, curr) => prev+curr, 0)
+  
+        genderPos[genders.get(name)] += totalThrows + tempDict.get('G')
+      
+        let taPerc = (1-(tempDict.get('TA')/totalThrows)).toFixed(2)
+  
+  
+        let styleTA = otherStats.map((action) => tempDict.get(action)).reduce((prev, curr) => prev+curr, 0)
+        let styleThrows = styleStats.map((action) => tempDict.get(action)).reduce((prev, curr) => prev+curr, 0)
+        var styleSuccess = 0
+  
+        if(styleThrows) {
+          styleSuccess =(1 - (styleTA/styleThrows)).toFixed(2)
+  
+        }
+  
+        let salary = goalWeight*tempDict.get('G') + 
+                  assistWeight* tempDict.get('assist') +
+                  assist2Weight* tempDict.get('assist2') +
+                  DWeight* tempDict.get('D') +
+                  DropWeight* tempDict.get('Drop') +
+                  TAWeight* tempDict.get('TA') +
+                  passWeight* totalThrows - tempDict.get('TA') +
+                  styleWeight*styleSuccess;
+        
+        // let gender_perc = p_to_f/(p_to_m+p_to_f)
+  
+        rows.push(createData(
+          name,
+          totalThrows,
+          tempDict.get('G'),
+          tempDict.get('assist'),
+          tempDict.get('D'),
+          tempDict.get('TA'),
+          tempDict.get('Drop'),
+          taPerc,
+          tempDict.get('assist2'),
+          salary,
+          favTarget.get(name),
+          tempDict.get('Huck'),
+          tempDict.get('Lefty'),
+          tempDict.get('Upside Down'),
+          tempDict.get('Layout'),
+          genderPerc.get(name),
+          tempDict.get('pickups')
+        ))
+      }
+      return [rows, genderPos]
+}
 
 function GameSummary(props) {
     // const initialStae = () => [];
     const [sortKey, setSortKey] = useState("Name")    
     const [ascending, setAscending] = useState(true)   
 
-    const stats = ['G', 'D', 'Drop', 'TA', 'assist', 'assist2']
     const styleStats = ['Huck', 'Lefty', "Upside Down", "Layout"]
-    const otherStats = styleStats.map((stat)=> stat+' TA')
     const line = props.line
     const possessions = props.possessions
 
-    const genders = new Map(
-      line.map((player) => {
-         return [player.name, player.gender]})
-    )
-
+    let [rows,genderPos] = process(line, possessions)
+    
     const [highlight, setHighlight] = useState("")    
-
+  
     const handleSort=(prop)=>
     {
       if (prop === sortKey){
@@ -83,164 +261,6 @@ function GameSummary(props) {
 
       }
     }
-    
-  
-    const passedTo = new Map(
-      line.map((player) => {
-         return [player.name, new Map(
-          line.map((player) => {
-             return [player.name,0]
-          }).concat(
-            stats.map((stat) => {
-              return [stat,0]
-           })
-          ).concat(
-            styleStats.map((stat) => {
-              return [stat,0]
-           })
-          ).concat(
-            otherStats.map((stat) => {
-              return [stat,0]
-           })
-          )
-      )]
-      })
-    )
-    
-
-    possessions.slice().map((e) => {
-
-      if (e[e.length-1] === "G") {
-          if (e.length>2) {
-          let [person ]  = e[e.length-3].split('+')
-          if (passedTo.has(person)) {
-            let tempDict = passedTo.get(person)
-            tempDict.set('assist', tempDict.get('assist')+1)
-          }
-        }
-        if (e.length>3) {
-        let [person2, ] = e[e.length-4].split('+')
-        if (passedTo.has(person2)) {
-          let tempDict = passedTo.get(person2)
-          tempDict.set('assist2', tempDict.get('assist2')+1)
-        }
-      }
-      
-      }
-        for (let i=0; i<e.length; i++) {
-          let [person, actions] = e[i].split('+')
-
-          if (passedTo.has(person)){
-            let tempDict = passedTo.get(person)
-            if (tempDict.has(e[i+1])) {
-              tempDict.set(e[i+1], tempDict.get(e[i+1])+1)
-            }
-            if (actions){
-              let actions_ = actions.split('/')
-              for (let k=0; k<actions_.length; k++)  {
-                let action = actions_[k]
-
-                  tempDict.set(action, tempDict.get(action)+1)
-
-                //Check if throwaway
-                let [next_person] = e[i+1].split('+')
-                if (next_person ==='TA') {
-                  tempDict.set(action+' TA', tempDict.get(action+' TA')+1)
-                }
-              }
-              
-            }
-          }
-        }
-        return 0;
-  
-      })
-    const favTarget = new Map(
-      props.line.map((player) => {
-        return [player.name,'']
-      })
-    )
-
-    const filterOut = (array, target) => array.filter(element => element[1] === target);
-    
-    var passes = []
-    for (const [name, map] of passedTo.entries()) {
-      passes = []
-      for (const [name, value] of map.entries()) {
-        if (stats.includes(name)) {
-          continue
-        }
-        if (styleStats.includes(name)) {
-          continue
-        }
-        if (otherStats.includes(name)) {
-          continue
-        }
-        passes.push([name, value])
-      }
-      
-      passes.sort((a,b) =>  b[1] -a[1])
-      if (passes[0][1] !== 0 && passes[0][1] !== passes[1][1]) {
-        favTarget.set(name, passes[0][0] + ' ' + passes[0][1])
-      }      
-      else if (passes[0][1] !== 0) {     
-        favTarget.set(name, filterOut(passes, passes[0][1]) 
-        .map((e) => e[0]).join('|') + ' '+ passes[0][1])
-      }
-    }
-
-
-    const rows = []
-
-    const genderPos = {"M":0, "F":0}
-    for (const [name,tempDict] of passedTo.entries()) {
-      let totalThrows = line.map((player) => {
-        return tempDict.get(player.name)
-      }).concat(tempDict.get('TA')).reduce((prev, curr) => prev+curr, 0)
-
-      genderPos[genders.get(name)] += totalThrows + tempDict.get('G')
-    
-      let taPerc = (1-(tempDict.get('TA')/totalThrows)).toFixed(2)
-
-
-      let styleTA = otherStats.map((action) => tempDict.get(action)).reduce((prev, curr) => prev+curr, 0)
-      let styleThrows = styleStats.map((action) => tempDict.get(action)).reduce((prev, curr) => prev+curr, 0)
-      var styleSuccess = 0
-
-      if(styleThrows) {
-        styleSuccess =(1 - (styleTA/styleThrows)).toFixed(2)
-
-      }
-
-      let salary = goalWeight*tempDict.get('G') + 
-                assistWeight* tempDict.get('assist') +
-                assist2Weight* tempDict.get('assist2') +
-                DWeight* tempDict.get('D') +
-                DropWeight* tempDict.get('Drop') +
-                TAWeight* tempDict.get('TA') +
-                passWeight* totalThrows - tempDict.get('TA') +
-                styleWeight*styleSuccess;
-      
-      
-
-      rows.push(createData(
-        name,
-        totalThrows,
-        tempDict.get('G'),
-        tempDict.get('assist'),
-        tempDict.get('D'),
-        tempDict.get('TA'),
-        tempDict.get('Drop'),
-        taPerc,
-        tempDict.get('assist2'),
-        salary,
-        favTarget.get(name),
-        tempDict.get('Huck'),
-        tempDict.get('Lefty'),
-        tempDict.get('Upside Down'),
-        tempDict.get('Layout')
-      ))
-    }
     rows.sort((a,b) => 
           {
             if (isNaN(a[sortKey])) {
@@ -254,7 +274,6 @@ function GameSummary(props) {
 
             }
           })
-    
     return (
       <Container>
 
@@ -287,7 +306,8 @@ function GameSummary(props) {
                 Net $
             </TableCell></Tooltip>
             <TableCell align="right"> Fave Target(s)</TableCell>
-
+            <TableCell align="right"  onClick={() => handleSort('gender_perc')} > % thrown to F</TableCell>
+            <TableCell align="right"  onClick={() => handleSort('pickups')} > pickups</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -317,7 +337,9 @@ function GameSummary(props) {
 
               <TableCell align="right">{row.value}</TableCell>
               <TableCell align="right">{row.favTarget}</TableCell>
-
+              <TableCell align="right">{row.gender_perc.toFixed(2)}</TableCell>
+              <TableCell align="right">{row.pickups}</TableCell>
+              
             </TableRow>
           ))}
         </TableBody>
@@ -341,3 +363,5 @@ function GameSummary(props) {
   
 
 export default GameSummary;
+
+export {process, createData, goalWeight ,assistWeight ,assist2Weight ,DWeight ,DropWeight ,TAWeight ,passWeight ,styleWeight}
