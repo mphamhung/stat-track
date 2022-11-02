@@ -305,9 +305,9 @@ function GameSummary(props) {
             ><TableCell align="right" onClick={() => handleSort('value')}>  
                 Net $
             </TableCell></Tooltip>
-            <TableCell align="right"> Fave Target(s)</TableCell>
             <TableCell align="right"  onClick={() => handleSort('gender_perc')} > % thrown to F</TableCell>
             <TableCell align="right"  onClick={() => handleSort('pickups')} > pickups</TableCell>
+            <TableCell align="right"> Fave Target(s)</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -336,9 +336,9 @@ function GameSummary(props) {
               <TableCell align="right">{row.layout}</TableCell>
 
               <TableCell align="right">{row.value}</TableCell>
-              <TableCell align="right">{row.favTarget}</TableCell>
               <TableCell align="right">{row.gender_perc.toFixed(2)}</TableCell>
               <TableCell align="right">{row.pickups}</TableCell>
+              <TableCell align="right">{row.favTarget}</TableCell>
               
             </TableRow>
           ))}
