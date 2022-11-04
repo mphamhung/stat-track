@@ -41,7 +41,7 @@ export default function TopBar(props) {
         else if (location.pathname === '/feedback'){
             setText("Thanks for the feedback!")
         }
-        else if (location.pathname === '/player'){
+        else if (location.pathname === '/player/'){
             setText("Profile")
         }
         else if (location.pathname === '/team/'){

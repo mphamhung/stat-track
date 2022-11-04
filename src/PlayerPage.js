@@ -24,6 +24,7 @@ export default function PlayerPage(props) {
             fetch(db_url+"/games?team_name=" + player.team_name)
             .then(resp => resp.json())
             .then(data => {
+
                 let player_data = data.map((game)=> {
                     let processed_game = process(game.line,game.possessions)
                     let rows = processed_game[0]
@@ -32,19 +33,21 @@ export default function PlayerPage(props) {
                         if (rows[i].name === player.name) r = rows[i]
                     }
                     return r
-                }
-                    
-                )
-                let dates = data.map((game)=>game.date)
-                
+                })
+                let dates = data.map((game)=>game.date).filter((d,idx)=> player_data[idx]!== null)
+                let player_data_filtered = player_data.filter((d)=> d!==null)
+                console.log(dates)
                 let stats = []
-                for (const key in player_data[0]){ if (key !== 'favTarget' && key !== 'name') stats.push(key)}
-                console.log(player_data, dates)
+
+                
+
+                for (const key in player_data_filtered[0]){ if (key !== 'favTarget' && key !== 'name') stats.push(key)}
+                console.log(player_data_filtered, dates)
                 let graphs = []
                 for (const i in stats){
                     let stat_data = []
-                    for (const j in player_data){
-                        stat_data.push(player_data[j][stats[i]])
+                    for (const j in player_data_filtered){
+                        stat_data.push(player_data_filtered[j][stats[i]])
                     }
                     graphs.push(
                         <Plot data = {[
@@ -62,7 +65,7 @@ export default function PlayerPage(props) {
                 }
         
                 setGraphs(graphs)
-                setPlayerData(player_data)
+                setPlayerData(player_data_filtered)
             })
         })
 
