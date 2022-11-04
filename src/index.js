@@ -11,6 +11,7 @@ import AdminPage from './AdminPage';
 import SummaryPage  from './SummaryPage'
 import FeedbackPage from './FeedbackPage';
 import TeamPage from './TeamPage';
+import PlayerPage from './PlayerPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <BrowserRouter>
@@ -22,6 +23,8 @@ root.render(
         <Route path='summary' element={<SummaryPage/>}/>
         <Route path='feedback' element={<FeedbackPage />}/>
         <Route path='team' element={<TeamPage />} />
+        <Route path='player' element={<PlayerPage />} />
+
       </Routes>
     </BrowserRouter>
 );

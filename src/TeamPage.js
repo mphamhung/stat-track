@@ -12,20 +12,20 @@ const db_url = "https://polydactyl-truthful-hyena.glitch.me"
     const id = searchParams.get('id')
     const [gameList, setGameList] = useState([])
     const [hasFetched, setHasFetched] = useState(false)
-
+    const [playerList, setPlayerList] = useState([])
     const navigate  = useNavigate ();
-
-    // const [possessions, setPossessions] = useState([])
-    // const [line, setLine] = useState([]) 
-
-    // const [hasFetched, setHasFetched] = useState(false)
-    // const [adminGames, setAdminGames] = useState([])
 
     useEffect( () => {
         fetch(db_url+"/teams/"+id)
         .then(resp => resp.json())
         .then(data => data.team_name)
         .then( team_name => {
+        fetch(db_url+"/players?team_name="+team_name)
+        .then(resp => resp.json())
+        .then( data => {
+            setPlayerList(data)
+        })
+
         fetch(db_url+"/games/")
         .then(resp => resp.json())
         .then( data => {
@@ -76,7 +76,6 @@ const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 
             })
 
-
             setGameList(games)
             setHasFetched(true)
             }
@@ -85,9 +84,23 @@ const db_url = "https://polydactyl-truthful-hyena.glitch.me"
         )
       }, [id, navigate])
 
+      console.log(playerList)
 
       return(
         <Container>
+            <Typography>
+                <h4>Roster</h4>
+            </Typography>
+            {playerList.map((player)=> {
+                return(
+                <Stack
+                onClick={( ) => navigate('/player/?id='+player.id)}
+                >
+                {player.name}
+                </Stack>
+                )
+                
+            })}
             <Typography>
                 <h4>Load Previous Games</h4>
             </Typography>
