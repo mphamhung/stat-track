@@ -274,6 +274,20 @@ function GameSummary(props) {
 
             }
           })
+    var t = null
+    // if (rows) {
+    if (rows.length>1) {
+    let totals = rows.reduce(function(rows_sum, row,i) {
+      return Object.values(row).map((item,j)=>{
+        return item+rows_sum[j]
+      })
+      
+    }, Array.from({length: Object.values(rows[0]).length}, (item, index) => 0))
+    t = createData(...totals)
+    }
+
+    // }
+
     return (
       <Container>
 
@@ -342,6 +356,33 @@ function GameSummary(props) {
               
             </TableRow>
           ))}
+          {t && 
+           <TableRow
+                         key='totals'
+                         style={{backgroundColor: 'white', borderStyle:'solid', borderColor:'black'}}
+                         sx={{ '&:last-child td, &:last-child th': { border: 0 }, }}
+                >
+           <TableCell component="th" scope="row" style={{position: 'sticky', left:0, background: 'white', fontWeight: 'bold' }}>
+                Total
+              </TableCell>   
+              <TableCell align="right">{t.goals}</TableCell>
+              <TableCell align="right">{t.assists}</TableCell>
+              <TableCell align="right">{t.assists2}</TableCell>
+              <TableCell align="right">{t.ds}</TableCell>
+              <TableCell align="right">{t.tas}</TableCell>
+              <TableCell align="right">{t.drops}</TableCell>
+              <TableCell align="right">{t.throws}</TableCell>
+              <TableCell align="right">{((t.throws)/(t.tas+t.drops+t.throws)).toFixed(2)}</TableCell>
+              <TableCell align="right">{t.huck}</TableCell>
+              <TableCell align="right">{t.lefty}</TableCell>
+              <TableCell align="right">{t.hammerscoob}</TableCell>
+              <TableCell align="right">{t.layout}</TableCell>
+              <TableCell align="right"> - </TableCell>
+              <TableCell align="right">{(genderPos["F"]/(genderPos["M"] + genderPos["F"])).toFixed(2)*100}%</TableCell>
+              <TableCell align="right">{t.pickups}</TableCell>
+              <TableCell align="right"> - </TableCell>
+             </TableRow>
+            }
         </TableBody>
       </Table>
     </TableContainer>
@@ -350,7 +391,14 @@ function GameSummary(props) {
           Other Stats: 
     </Typography>
     <Typography>
-              Possessions {(genderPos["M"]/(genderPos["M"] + genderPos["F"])).toFixed(2)*100}% M,  {(genderPos["F"]/(genderPos["M"] + genderPos["F"])).toFixed(2)*100}% F
+              {t && <div>
+                  <div>
+                  Average throw per possessions = {(t.throws/t.pickups).toFixed(2)}
+                  </div>
+                  <div>
+                  Possesion to goal percentage = {(t.goals/t.pickups).toFixed(2)}
+                  </div>
+                  </div>}
     </Typography>
     <Button onClick={() => {
       navigator.clipboard.writeText(window.location.href)
