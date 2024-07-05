@@ -12,7 +12,7 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 function LandingPage(props) {
     const date = new Date()
     const dateId = months[date.getMonth()]+ '-'+ date.getDate() + '-' + date.getFullYear()
-    const [home, setHome] = useState("Congee Queens");
+    const [home, setHome] = useState("Devs");
     const [away, setAway] = useState("");
 
     const [gameList, setGameList] = useState('')
