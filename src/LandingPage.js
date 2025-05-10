@@ -6,13 +6,13 @@ import { Container } from "@mui/system";
 const db_url = "https://polydactyl-truthful-hyena.glitch.me"
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-
+const default_team = "Devs 2025"
 
 
 function LandingPage(props) {
     const date = new Date()
     const dateId = months[date.getMonth()]+ '-'+ date.getDate() + '-' + date.getFullYear()
-    const [home, setHome] = useState("Devs");
+    const [home, setHome] = useState(default_team);
     const [away, setAway] = useState("");
 
     const [gameList, setGameList] = useState('')
